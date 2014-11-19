@@ -6,7 +6,8 @@ title: Kontakt
 Im Cyberspace bin ich hier erreichbar:
 
 **XMPP**: [tim@boese-ban.de](xmpp:tim@boese-ban.de)  
-**E-Mail**: <tim@datenknoten.me>  
+**E-Mail**: <tim@datenknoten.me> ([Verschlüsselt](https://encrypt.to/tim@datenknoten.me))  
+**Keybase**: [keybase.io/0xaffe](https://keybase.io/0xaffe)  
 **Twitter**: [0xAFFE](https://twitter.com/0xAFFE)  
 **Github**: [enko](https://github.com/enko)  
 **Tumblr**: [lost.hacked.jp](http://lost.hacked.jp)  
