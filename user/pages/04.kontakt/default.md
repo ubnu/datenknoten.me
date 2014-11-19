@@ -17,3 +17,5 @@ Tim Schumacher
 Herderstraße 8  
 07743 Jena  
 Deutschland
+
+Telefon: [+49 3641 5598036](tel:+49 3641 5598036)
