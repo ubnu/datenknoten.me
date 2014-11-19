@@ -16,7 +16,7 @@ content:
     pagination: true
 
 feed:
-    description: Sample Blog Description
+    description: Tims Blawg
     limit: 10
 
 pagination: true
