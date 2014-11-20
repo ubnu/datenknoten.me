@@ -1,0 +1,66 @@
+https://keybase.io/0xaffe
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://datenknoten.me
+  * I am 0xaffe (https://keybase.io/0xaffe) on keybase.
+  * I have a public key with fingerprint 9055 4415 45C7 4387 9E80  1E90 0774 0725 A83D CDBB
+
+To claim this, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "fingerprint": "9055441545c743879e801e9007740725a83dcdbb",
+            "host": "keybase.io",
+            "key_id": "07740725A83DCDBB",
+            "uid": "f75393047c5584a68863ead7c0839700",
+            "username": "0xaffe"
+        },
+        "service": {
+            "hostname": "datenknoten.me",
+            "protocol": "https:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1398160858,
+    "expire_in": 157680000,
+    "prev": "9d275aa5e4d46d15be56ae984586c2f3afeb1a2eec45a51a3db28e0c15a5e6e7",
+    "seqno": 4,
+    "tag": "signature"
+}
+
+with the aforementioned key, yielding the PGP signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v2.0.22 (MingW32)
+
+owGbwMvMwMTIXsKuusL27G7G0wc+JTEEh9neqlZKyk+pVLKqVspOBVNpmXnpqUUF
+RZl5JUpWSpYGpqYmJoamJqbJ5ibGFuaWqRYGhqmWBgbm5iYG5kamiRbGKckpSUlK
+OkoZ+cUgHUBjkhKLU/Uy84FiQE58ZgpQFKbe0cLYxdnFyQkoVwqWSDM3NbY0NjAx
+TzY1tTBJNLOwMDNOTUwxTzawMLY0NzAAKSxOLcpLzE0FGVORmJaWqlSrowQUK8tM
+TgW5GGQxVD4lsSQ1LzsvH0jqAQV0lAqK8kvyk/NzgHIZJSUFxVYgvSWVBSDF5alJ
+8VBj4pMy81KAHgfqKEstKs7Mz1OyMgSqTC7JBJlraGxpYWhmYGFqoaOUWlGQWZQa
+nwlSYWpuZmEABCB7UstAwZViZG6amGiaapJiYpZiaJqUamqWmGppYWJqYZZslGac
+mJaaZJholJqabGKaaGqYaJySZGSRapBsCOSlmqWaK4E8VpiXr2RlAnRmYjrQyOLM
+9LzEktIioK87mWRYGBiZGNhYmUBRx8DFKQCL0EVO/P/0BULnlU5qubyh7+ej5LtG
+j05oB0+/WbKQ/V230eNnKyw3trHpRp9bMv1eSeTuj1pJe+LFOpZncfbsq9G6yngj
+l/373OcptluXTcmq3ZEouk6s5FFw+bH2uxsSxQqkc6fl7N7OL/buAtdlRnMV44Wt
+AZfSdNdZ/drd/eb5Yfk93xNUBaZPuvZ7v+X9R/O/3Vzr6zx7Tkdq3/q4H8f6I9ob
+1wtL1QYvPHtpQd5SRmflv5duvz67XqLNzvTanD9ml59mrd1pwbdU/GnNPJHfWT07
+17cvFHm02WlpSPVzWXGRDnkjPe8uo9yt4r+EA3/Z8KUsvfy81NvjfQ+nmvfqxzyG
+cyX29j38yPRmkeXToFzpSKf1vjqNts5Pet8wh62d4Dv1bei+U8E7/6z/cvuKlfmH
+WTlXJYLnTkmwvSJR1Cnj+/FDaVMa+8ksI8dtT+O6nzqHVnk/c757vzx4mdXKgnS/
+te0NvcaN7NlbDk2NXO8nxPeP8cZt8W+i9xvEz52/c9nnWEonX1JpYpOPQ/6R7lr1
+bc1h0Q9Xa36fYxlwRn+N1dLLtnvS7r67ePOLVFDCWV+r24tKJ2U/26sp803s9d3j
+8q/Uy5ttn5xi2H9Da7tw8gmHhMbd91+GuvzTnxL2/rtLVrPZtRSn7U+tPl2vEzFc
+H1tyseCQY+mu8KCJ3I+73+czqW3/d+JZW1hswC1VAfuimxnis40cI8q4XtcAAA==
+=wa8a
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/0xaffe
