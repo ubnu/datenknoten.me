@@ -6,6 +6,7 @@ taxonomy:
     tag: [wtf,jesus,zebra,regenbogen]
 continue_link: false
 ---
+
 ![Jesus zebra](JesusZebra.jpg)
 
 [via](http://www.misterhonk.de/blog/14298/a-naked-jesus-with-rainbow-laser-shooting-on-his-cheetah-nipples/)
