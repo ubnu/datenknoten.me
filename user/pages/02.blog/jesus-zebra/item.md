@@ -3,7 +3,7 @@ title: Jesus
 date: 11:32 11/24/2014
 taxonomy:
     category: blog
-    tag: [wtf,jesus,zebra,regenbogen]
+    tag: [wtf,jesus,zebra,regenbogen,psychedelic]
 continue_link: false
 ---
 
