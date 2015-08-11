@@ -1,0 +1,10 @@
+{% set taxlist = taxonomylist.get() %}
+
+{% if taxlist %}
+    {% for tax,value in taxlist[taxonomy] %}
+         <a class="ui my tiny labeled icon button" href="{{ base_url }}/tag:{{ tax|e('url') }}">
+             <i class="icon tag"></i>
+             {{ tax }}
+         </a>
+    {% endfor %}
+{% endif %}

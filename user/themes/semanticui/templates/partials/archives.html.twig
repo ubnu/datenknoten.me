@@ -1,0 +1,13 @@
+<div class="ui divided list">
+
+    {% for month,items in archives_data %}
+        <div class="item">
+            <a href="{{ base_url }}/month:{{ month|date('M_Y')|lower|e('url') }}">
+                {% if archives_show_count %}
+                    <span class="ui circular blue label">{{ items|length }}</span>
+                {% endif %}
+                <span class="archive_date">{{ month }}</span>
+            </a>
+        </div>
+    {% endfor %}
+</div>

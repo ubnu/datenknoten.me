@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+        <meta charset="utf-8"/>
+        <title>{% if header.title %}{{ header.title|e('html') }} | {% endif %}{{ site.title|e('html') }}</title>
+        {% include 'partials/metadata.html.twig' %}
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <link rel="icon" type="image/png" href="{{ url('theme://images/favicon.png') }}"/>
+
+        {% block stylesheets %}
+            {% do assets.addCss('theme://css/semantic.css',100) %}
+            {% do assets.addCss('theme://css/custom.css',101) %}
+        {% endblock %}
+        {{ assets.css() }}
+
+        {% block javascripts %}
+            {% do assets.addJs('jquery',101) %}
+            {% do assets.addJs('theme://js/semantic.js') %}
+        {% endblock %}
+        {{ assets.js() }}
+
+    {% endblock head %}
+</head>
+<body id="top" class="ui basic segment id-{{ page.name }} {{ page.header.body_classes }}">
+{% block header %}
+    <header class="">
+        <h1 class="ui large top attached header"><a href="{{ base_url == '' ? '/' : base_url }}">{{ config.site.title }}</a></h1>
+        {% include 'partials/navigation.html.twig' %}
+    </header>
+{% endblock %}
+{% block body %}
+    <section id="body" class="{% if page.name != 'blog.md' %}ui segment {% endif %}{{ class }}">
+        {% block content %}{% endblock %}
+    </section>
+{% endblock %}
+{% block footer %}
+{% endblock %}
+{% block bottom %}
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                $('.dropdown')
+                        .dropdown({
+                            // you can use any ui transition
+                            transition: 'drop'
+                        })
+                ;
+            });
+        });
+    </script>
+{% endblock %}
+</body>
+</html>
