@@ -19,8 +19,8 @@ Eine erste Demo habe ich unter [ligi.datenknoten.me](https://ligi.datenknoten.me
   
 Wo ich noch hilfe brauche:
 
-  - Übersetzung des Interfaces. Wenn Du eine Sprache übersetzen willst, sag [mir bescheid](/uebermich) und ich helfe dir es einzurichten, so dass Du die Übersetzung machen kannst. 
-  - Design. Da ich nix mit Design am Hut hab, benutze ich das Framework [Semantic UI](http://semantic-ui.com). Wenn Du in diesem Bereich aushelfen willst, [sag bescheid](/uebermich), ich helfe Dir los zu legen.
-  - Projektmanagement. Ich programmiere gerade die Teile, von denen ich denke, dass sie gebraucht werden. Jemand anderes als ich sollte bestimmen was wichtig ist und was nicht.
+  - Übersetzung des Interfaces. Wenn Du eine Sprache übersetzen willst, sag [mir Bescheid](/uebermich) und ich helfe dir es einzurichten, so dass Du die Übersetzung machen kannst. 
+  - Design. Da ich nix mit Design am Hut hab, benutze ich das Framework [Semantic UI](http://semantic-ui.com). Wenn Du in diesem Bereich aushelfen willst, [sag Bescheid](/uebermich) und ich helfe Dir los zu legen.
+  - Projektmanagement. Ich programmiere gerade die Teile, von denen ich denke, dass sie gebraucht werden. Jemand anderes als ich sollte bestimmen, was wichtig ist und was nicht.
   
 Den Quellcode von Ligi gibt es auf [Github](https://github.com/datenknoten/ligi/). „Pull Requests“ sind immer gerne gesehen.
