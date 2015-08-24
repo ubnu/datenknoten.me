@@ -23,4 +23,4 @@ Wo ich noch hilfe brauche:
   - Design. Da ich nix mit Design am Hut hab, benutze ich das Framework [Semantic UI](http://semantic-ui.com). Wenn du in diesem Bereich aushelfen willst, [sag bescheid](/uebermich), ich helfe dir los zu legen.
   - Projektmanagement. Ich programmiere gerade die Teile, wo ich denke das sie gebraucht werden. Jemand anderes als ich sollte bestimmen was wichtig ist und was nicht.
   
-Den Quellcode von Ligi gibt es 
+Den Quellcode von Ligi gibt es auf [Github](https://github.com/datenknoten/ligi/). „Pull Requests“ sind immer gerne gesehen.
