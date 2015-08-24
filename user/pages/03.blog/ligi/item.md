@@ -9,7 +9,7 @@ continue_link: false
 
 Mein Kumpel [Micha](https://micha.stoecker.me/) kam bei einem Gespräch auf die Idee, eine Anwendung zur Hilfe für Refugees zu bauen. Auf der einen Seite gibt es Leute, die etwas an Refugees spenden wollen und auf der anderen Seite Refugees, die etwas brauchen. Die Anwendung soll beide auf einfache Art und Weise zusammenbringen. Aktuell läuft das ja alles relativ unstrukturiert. Gruppen rufen auf, das etwas gebraucht wird und manchmal posten Leute noch, wenn sie etwas abgeben wollen. Unser Projekt soll dabei helfen. Wir haben uns auf den Namen „ligi“ geeignet, das ist [Esperanto](https://de.wikipedia.org/wiki/Esperanto) und steht für „verbinden“, da wir Menschen verbinden wollen.
 
-Eine große Problemstellung an dem Projekt sind die Sprachbarieren der Menschen untereinander. So kann wahrscheinlich kaum einer der Spender arabisch oder syrisch und bei den Geflüchteten sieht es mit Deutsch unter Umständen auch nicht so gut aus. Aus diesem Grund muss es freiwillige geben, die die Inhalte und auch Nachrichten der Menschen untereinander Übersetzen.
+Eine große Problemstellung an dem Projekt sind die Sprachbarrieren der Menschen untereinander. So kann wahrscheinlich kaum einer der Spender arabisch oder syrisch und bei den Geflüchteten sieht es mit Deutsch unter Umständen auch nicht so gut aus. Aus diesem Grund muss es Freiwillige geben, die die Inhalte und auch Nachrichten der Menschen untereinander Übersetzen.
 
 Eine erste Demo habe ich unter [ligi.datenknoten.me](https://ligi.datenknoten.me) aufgesetzt. Die Version ist lange noch nicht fertig, was auf jeden Fall noch fehlt:
 
