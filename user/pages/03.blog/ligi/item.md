@@ -7,7 +7,7 @@ taxonomy:
 continue_link: false
 ---
 
-Vor mehr als einer Woche habe ich mit meinem Kumpel [Micha](https://micha.stoecker.me/) geredet und Micha kam auf die Idee das man ja eine Anwendung bauen könnte um Leute die etwas an Regugees spenden wollen und Refugees die etwas brauchen auf einfache Art und Weise zusammen zu bringen. Aktuell läuft das ja alles relativ unstrukturiert, das Gruppen aufrufen das etwas gebraucht wird und manchmal posten Leute noch, wenn sie etwas abgeben wollen. Als Name des Projekts haben wir uns auf „ligi“ geeignet, das ist [Esperanto](https://de.wikipedia.org/wiki/Esperanto) und steht für „verbinden“, da wir Menschen verbinden wollen.
+Vor mehr als einer Woche habe ich mit meinem Kumpel [Micha](https://micha.stoecker.me/) geredet und Micha kam auf die Idee das man ja eine Anwendung bauen könnte um Leute die etwas an Refugees spenden wollen und Refugees die etwas brauchen auf einfache Art und Weise zusammen zu bringen. Aktuell läuft das ja alles relativ unstrukturiert, das Gruppen aufrufen das etwas gebraucht wird und manchmal posten Leute noch, wenn sie etwas abgeben wollen. Als Name des Projekts haben wir uns auf „ligi“ geeignet, das ist [Esperanto](https://de.wikipedia.org/wiki/Esperanto) und steht für „verbinden“, da wir Menschen verbinden wollen.
 
 Eine große Problemstellung an dem Projekt sind die Sprachbarieren der Menschen untereinander, so kann wahrscheinlich kaum einer der Spender arabisch oder syrisch und bei den Geflüchteten sieht es mit deutsch unter Umständen auch nicht so gut aus. Aus diesem Grund muss es freiwillige geben, die die Inhalte und auch Nachrichten der Menschen untereinander Übersetzen.
 
