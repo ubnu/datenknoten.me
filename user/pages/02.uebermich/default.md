@@ -3,23 +3,15 @@ title: Über mich
 ---
 ## Über mich
 
-Ich bin ein 30 Jähriger DevOps aus Jena.
+Ich bin ein 30-jähriger DevOps aus Jena.
  
-Einen Lebenslauf findest du hier: [https://cv.datenknoten.me/](https://cv.datenknoten.me/)
+Einen Lebenslauf findest du hier: [cv.datenknoten.me](https://cv.datenknoten.me/)
 
 ## Kontakt
 
 **XMPP**: [tim@boese-ban.de](xmpp:tim@boese-ban.de)  
-**E-Mail**: <tim@datenknoten.me> ([Verschlüsselt](https://encrypt.to/tim@datenknoten.me))
-
-Im Meatspace bin ich hier erreichbar:
-
-Tim Schumacher  
-Herderstraße 8  
-07743 Jena  
-Deutschland
-
-Telefon: [+49 3641 5598036](tel:+49 3641 5598036)
+**E-Mail**: <tim@datenknoten.me> ([Verschlüsselt](https://encrypt.to/tim@datenknoten.me))  
+**Telefon**: [+49 3641 5598036](tel:+49 3641 5598036)
 
 ## Social Media
 
