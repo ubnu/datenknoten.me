@@ -44,8 +44,8 @@ p {
     display: inline;
 }
 
-#body .twelve.wide.column {
-    padding: 0;
+#body .wide.column,#body .wide.column {
+    padding: 0 !important;
 }
 
 .ui.my.label, .ui.my.button {
