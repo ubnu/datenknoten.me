@@ -44,8 +44,14 @@ p {
     display: inline;
 }
 
-#body .wide.column,#body .wide.column {
+/*@media only screen and (max-width: 767px) {
+  #body .wide.column,#body .wide.column {
     padding: 0 !important;
+  }
+}*/
+
+#body {
+  margin-top: 1rem;
 }
 
 .ui.my.label, .ui.my.button {

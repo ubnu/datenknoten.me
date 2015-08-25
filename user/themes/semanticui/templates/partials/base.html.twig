@@ -24,9 +24,9 @@
     </header>
 {% endblock %}
 {% block body %}
-    <section id="body" class="{% if page.name != 'blog.md' %}ui segment {% endif %}{{ class }}">
-        {% block content %}{% endblock %}
-    </section>
+  <section id="body" class="{% if not (page.route matches '#^/blog(.*)$#') %}ui segment {% endif %}{{ class }}">
+    {% block content %}{% endblock %}
+  </section>
 {% endblock %}
 {% block footer %}
 {% endblock %}

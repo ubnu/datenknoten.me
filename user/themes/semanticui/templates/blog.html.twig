@@ -14,7 +14,7 @@
 
     {% block content %}
         <div class="ui basic segment">
-            <div class="ui stackable vertically padded grid">
+            <div class="ui stackable grid">
                 <div class="twelve wide column">
                     {% set blog_image = page.media.images|first.grayscale().contrast(20).brightness(-100).colorize(-35,81,122) %}
 
