@@ -44,11 +44,9 @@ p {
     display: inline;
 }
 
-/*@media only screen and (max-width: 767px) {
-  #body .wide.column,#body .wide.column {
-    padding: 0 !important;
-  }
-}*/
+.id-blog_md .twelve.wide.column .ui.segment:first-child {
+  margin-top: 0;
+}
 
 #body {
   margin-top: 1rem;
@@ -65,4 +63,9 @@ p {
 
 iframe.instagram-media {
     margin-bottom: 20px !important;
+}
+
+
+.id_blog_md section#body .ui.segment:first-child {
+  margin-top: 0;
 }

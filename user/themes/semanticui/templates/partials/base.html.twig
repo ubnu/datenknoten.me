@@ -16,7 +16,7 @@
         {{ assets.css() }}
     {% endblock head %}
 </head>
-<body id="top" class="ui basic segment id-{{ page.name }} {{ page.header.body_classes }}">
+<body id="top" class="ui basic segment id-{{ page.name|replace({'.':'_'}) }} {{ page.header.body_classes }}">
 {% block header %}
     <header class="">
         <h1 class="ui large top attached header"><a href="{{ base_url == '' ? '/' : base_url }}">{{ config.site.title }}</a></h1>
