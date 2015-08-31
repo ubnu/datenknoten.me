@@ -323,6 +323,7 @@ inzwischen behoben).
 Insgesamt bin ich mit dem Setup sehr zufrieden, vorallem weil es
 kaputte Netze brauchbar macht, da ich durch das VPN ein zensurfreies
 Netz, IPv6, einen DNSSEC fähigen Resolver bekomme. Bei Fragen könnt
-ihr mich entweder per [E-Mail](mailto:tim@datenknoten.me) oder auch im
+ihr mich entweder per [E-Mail](mailto:tim@datenknoten.me), im
 [Chat](https://www.krautspace.de/chat2/) des
-[Krautspaces](https://www.krautspace.de/) kontaktieren.
+[Krautspaces](https://www.krautspace.de/) kontaktieren oder
+hinterlasst einen Kommentar am Ende.
