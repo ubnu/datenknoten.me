@@ -5,6 +5,8 @@ taxonomy:
     category: blog
     tag: [linux,openvpn,internet,ipv6,dnssec,ipsec]
 continue_link: false
+highlight:
+    theme: solarized_dark
 ---
 
 Ziel dieses Artikel ist es zu zeigen wie mein [OpenVPN](https://openvpn.net/)-Setup
