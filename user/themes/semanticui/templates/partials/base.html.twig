@@ -6,10 +6,11 @@
         <title>{% if header.title %}{{ header.title|e('html') }} | {% endif %}{{ site.title|e('html') }}</title>
         {% include 'partials/metadata.html.twig' %}
 
-        <meta property="og:title" content="{% if header.title %}{{ header.title|e('html') }} | {% endif %}{{ site.title|e('html') }}">
+        <meta property="og:title"
+              content="{% if header.title %}{{ header.title|e('html') }} | {% endif %}{{ site.title|e('html') }}">
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="{{ site.title|e('html') }}">
-        <meta property="og:description" content="{{ page.summary }}">
+        <meta property="og:description" content="{{ page.summary|e('html')|replace({'\n':''}) }}">
 
         <meta name="viewport"
               content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
