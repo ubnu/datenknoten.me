@@ -69,3 +69,19 @@ iframe.instagram-media {
 .id_blog_md section#body .ui.segment:first-child {
   margin-top: 0;
 }
+
+body,.ui.header {
+    font-family: "Dosis","Lato",​​Arial,​Helvetica,​sans-serif !important;
+}
+
+.content .description p {
+    text-align: justify;
+    hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+}
+
+code {
+    font-family: "Source Code Pro",monospace;
+}

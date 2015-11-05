@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     {% block head %}
         <meta charset="utf-8"/>
@@ -8,10 +8,11 @@
         <meta name="viewport"
               content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link rel="icon" type="image/png" href="{{ url('theme://images/favicon.png') }}"/>
-
+        <link href='https://fonts.googleapis.com/css?family=Dosis:400,700' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400' rel='stylesheet' type='text/css'>
         {% block stylesheets %}
             {% do assets.addCss('theme://dist/semantic.css',100) %}
-            {% do assets.addCss('theme://css/custom.css',101) %}
+            {% do assets.addCss('theme://css/custom.css',99) %}
         {% endblock %}
         {{ assets.css() }}
     {% endblock head %}
