@@ -108,6 +108,8 @@ class Grav extends Container
         $container['page'] = function ($c) {
             /** @var Pages $pages */
             $pages = $c['pages'];
+            /** @var Language $language */
+            $language = $c['language'];
 
             /** @var Uri $uri */
             $uri = $c['uri'];
@@ -117,9 +119,21 @@ class Grav extends Container
 
             $page = $pages->dispatch($path);
 
-            // handle redirect if not 'default route' configuration
-            if ($page && $c['config']->get('system.pages.redirect_default_route') && $page->route() != $path) {
-                $c->redirectLangSafe($page->route());
+            // Redirection tests
+            if ($page) {
+                // Language-specific redirection scenarios
+                if ($language->enabled()) {
+                    if ($language->isLanguageInUrl() && !$language->isIncludeDefaultLanguage()) {
+                        $c->redirect($page->route());
+                    }
+                    if (!$language->isLanguageInUrl() && $language->isIncludeDefaultLanguage()) {
+                        $c->redirectLangSafe($page->route());
+                    }
+                }
+                // Default route test and redirect
+                if ($c['config']->get('system.pages.redirect_default_route') && $page->route() != $path) {
+                    $c->redirectLangSafe($page->route());
+                }
             }
 
             // if page is not found, try some fallback stuff
@@ -171,12 +185,15 @@ class Grav extends Container
         /** @var Debugger $debugger */
         $debugger = $this['debugger'];
 
+
+
         // Initialize configuration.
         $debugger->startTimer('_config', 'Configuration');
         $this['config']->init();
+        $this['errors']->resetHandlers();
         $this['uri']->init();
         $this['session']->init();
-        $this['errors']->resetHandlers();
+
         $debugger->init();
         $this['config']->debug();
         $debugger->stopTimer('_config');
@@ -190,6 +207,13 @@ class Grav extends Container
         // Initialize the timezone
         if ($this['config']->get('system.timezone')) {
             date_default_timezone_set($this['config']->get('system.timezone'));
+        }
+
+        // Initialize Locale if set and configured
+        if ($this['language']->enabled() && $this['config']->get('system.languages.override_locale')) {
+            setlocale(LC_ALL, $this['language']->getLanguage());
+        } elseif ($this['config']->get('system.default_locale')) {
+            setlocale(LC_ALL, $this['config']->get('system.default_locale'));
         }
 
         $debugger->startTimer('streams', 'Streams');
@@ -248,16 +272,28 @@ class Grav extends Container
      * @param string $route Internal route.
      * @param int $code Redirection code (30x)
      */
-    public function redirect($route, $code = 303)
+    public function redirect($route, $code = null)
     {
         /** @var Uri $uri */
         $uri = $this['uri'];
+
+        //Check for code in route
+        $regex = '/.*(\[(30[1-7])\])$/';
+        preg_match($regex, $route, $matches);
+        if ($matches) {
+            $route = str_replace($matches[1], '', $matches[0]);
+            $code = $matches[2];
+        }
+
+        if ($code == null) {
+            $code = $this['config']->get('system.pages.redirect_default_code', 301);
+        }
 
         if (isset($this['session'])) {
             $this['session']->close();
         }
 
-        if ($this['uri']->isExternal($route)) {
+        if ($uri->isExternal($route)) {
             $url = $route;
         } else {
             $url = rtrim($uri->rootUrl(), '/') .'/'. trim($route, '/');
@@ -273,16 +309,15 @@ class Grav extends Container
      * @param string $route Internal route.
      * @param int $code Redirection code (30x)
      */
-    public function redirectLangSafe($route, $code = 303)
+    public function redirectLangSafe($route, $code = null)
     {
         /** @var Language $language */
         $language = $this['language'];
-        $config = $this['config'];
 
-        if ($language->enabled()) {
+        if (!$this['uri']->isExternal($route) && $language->enabled() && $language->isIncludeDefaultLanguage()) {
             return $this->redirect($language->getLanguage() . $route, $code);
         } else {
-            return $this->redirect($route);
+            return $this->redirect($route, $code);
         }
     }
 
@@ -326,7 +361,7 @@ class Grav extends Container
 
         if ($expires > 0) {
             $expires_date = gmdate('D, d M Y H:i:s', time() + $expires) . ' GMT';
-            header('Cache-Control: max-age=' . $expires_date);
+            header('Cache-Control: max-age=' . $expires);
             header('Expires: '. $expires_date);
         }
 
@@ -413,7 +448,7 @@ class Grav extends Container
     }
 
     /**
-     * This attempts to fine media, other files, and download them
+     * This attempts to find media, other files, and download them
      * @param $page
      * @param $path
      */
@@ -421,6 +456,16 @@ class Grav extends Container
     {
         /** @var Uri $uri */
         $uri = $this['uri'];
+
+        /** @var Config $config */
+        $config = $this['config'];
+
+        $uri_extension = $uri->extension();
+
+        // Only allow whitelisted types to fallback
+        if (!in_array($uri_extension, $config->get('system.pages.fallback_types'))) {
+            return;
+        }
 
         $path_parts = pathinfo($path);
         $page = $this['pages']->dispatch($path_parts['dirname'], true);
@@ -443,7 +488,6 @@ class Grav extends Container
             }
 
             // unsupported media type, try to download it...
-            $uri_extension = $uri->extension();
             if ($uri_extension) {
                 $extension = $uri_extension;
             } else {
@@ -456,7 +500,7 @@ class Grav extends Container
 
             if ($extension) {
                 $download = true;
-                if (in_array(ltrim($extension, '.'), $this['config']->get('system.media.unsupported_inline_types'))) {
+                if (in_array(ltrim($extension, '.'), $config->get('system.media.unsupported_inline_types', []))) {
                     $download = false;
                 }
                 Utils::download($page->path() . DIRECTORY_SEPARATOR . $uri->basename(), $download);

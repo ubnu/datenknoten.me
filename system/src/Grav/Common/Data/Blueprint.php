@@ -238,6 +238,9 @@ class Blueprint
 
             if ($rule) {
                 // Item has been defined in blueprints.
+                if (is_array($field) && count($field) == 1 && reset($field) == '') {
+                    continue;
+                }
                 $field = Validation::filter($field, $rule);
             } elseif (is_array($field) && is_array($val)) {
                 // Array has been defined in blueprints.
@@ -324,7 +327,7 @@ class Blueprint
             $field['name'] = $prefix . $key;
             $field += $params;
 
-            if (isset($field['fields']) && $field['type'] !== 'list') {
+            if (isset($field['fields']) && (!isset($field['type']) || $field['type'] !== 'list')) {
                 // Recursively get all the nested fields.
                 $newParams = array_intersect_key($this->filter, $field);
                 $this->parseFormFields($field['fields'], $newParams, $prefix, $current[$key]['fields']);
