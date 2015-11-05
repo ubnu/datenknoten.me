@@ -2,7 +2,7 @@
 
     {% for month,items in archives_data %}
         <div class="item">
-            <a href="{{ base_url }}/blog/month:{{ month|date('M_Y')|lower|e('url') }}">
+            <a href="{{ base_url }}/month:{{ month|date('M_Y')|lower|e('url') }}">
                 {% if archives_show_count %}
                     <span class="ui circular blue label">{{ items|length }}</span>
                 {% endif %}
