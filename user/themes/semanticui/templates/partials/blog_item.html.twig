@@ -1,73 +1,61 @@
-<div class="ui segment">
-  <div class="content">
+{% set embed = embed|default(false) %}
+<div class="ui top attached segment">
     {% if page.header.link %}
-      <h2 class="ui dividing header">
-        {% if page.header.continue_link is not sameas(false) %}
-          <a href="{{ page.url }}"><i class="fa fa-angle-double-right"></i></a>
-        {% endif %}
-        <a href="{{ page.header.link }}">{{ page.title }}</a>
-      </h2>
+        <h2 class="ui header">
+            {% if page.header.continue_link is not sameas(false) %}
+                <a href="{{ page.url }}"><i class="fa fa-angle-double-right"></i></a>
+            {% endif %}
+            <a href="{{ page.header.link }}">{{ page.title }}</a>
+        </h2>
     {% else %}
-      <h2 class="ui dividing header"><a href="{{ page.url }}">{{ page.title }}</a></h2>
+        <h2 class="ui header"><a href="{{ page.url }}">{{ page.title }}</a></h2>
     {% endif %}
-    <div class="meta">
-      <div class="ui mini compact labeled icon button">
-        <i class="calendar icon"></i>
-        {{ page.date|date("Y-m-d") }}
-      </div>
-      {% if page.taxonomy.tag %}
-        {% for tag in page.taxonomy.tag %}
-          <a class="ui mini compact labeled icon button" href="{{ base_url }}/tag{{ config.system.param_sep }}{{ tag }}">
-            <i class="tag icon"></i>
-            {{ tag }}
-          </a>
-        {% endfor %}
-      {% endif %}
-    </div>
-    <div class="description">
-      {% if page.header.continue_link is sameas(false) %}
-        <p>{{ page.content }}</p>
-        {% if not truncate %}
-          {% set show_prev_next = true %}
-        {% endif %}
-      {% elseif truncate and page.summary != page.content %}
-        <p>{{ page.summary }}</p>
-        <p><a href="{{ page.url }}">Continue Reading...</a></p>
-      {% elseif truncate %}
-        <p>{{ page.content|truncate(550) }}</p>
-        <p><a href="{{ page.url }}">Continue Reading...</a></p>
-      {% else %}
-        <p>{{ page.content }}</p>
-        {% set show_prev_next = true %}
-      {% endif %}
-
-      {% if show_prev_next %}
-
-        <p class="prev-next">
-          {% if not page.isFirst %}
-            <a class="button" href="{{ page.nextSibling.url }}"><i class="fa fa-chevron-left"></i> Next Post</a>
-          {% endif %}
-
-          {% if not page.isLast %}
-            <a class="button" href="{{ page.prevSibling.url }}">Previous Post <i
-                                                                                 class="fa fa-chevron-right"></i></a>
-                                                                               {% endif %}
-        </p>
-      {% endif %}
-    </div>
-  </div>
 </div>
-{% if page.route != '/blog' %}
-  <div class="ui segment" id='discourse-comments'></div>
+<div class="ui attached segment">
+    <div class="content">
+        <div class="description">
+            {% if truncate %}
+                {{ page.summary }}
 
-<script type="text/javascript">
-  DiscourseEmbed = { discourseUrl: 'https://discourse.datenknoten.me/',
-                     discourseEmbedUrl: 'https://datenknoten.me{{ page.url }}' };
+                <a href="{{ page.url }}">Weiter lesen…</a>
+            {% else %}
+                {{ page.content }}
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="ui attached segment">
+    <div class="meta">
+        <div class="ui mini compact labeled icon button">
+            <i class="calendar icon"></i>
+            {{ page.date|date("Y-m-d") }}
+        </div>
+        {% if page.taxonomy.tag %}
+            {% for tag in page.taxonomy.tag %}
+                <a class="ui mini compact labeled icon button"
+                   href="{{ base_url }}/tag{{ config.system.param_sep }}{{ tag }}">
+                    <i class="tag icon"></i>
+                    {{ tag }}
+                </a>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% if not embed %}
+    <div class="ui bottom attached segment" id='discourse-comments'></div>
 
-  (function() {
-    var d = document.createElement('script'); d.type = 'text/javascript'; d.async = true;
-    d.src = DiscourseEmbed.discourseUrl + 'javascripts/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
-  })();
-</script>
+    <script type="text/javascript">
+        DiscourseEmbed = {
+            discourseUrl: 'https://discourse.datenknoten.me/',
+            discourseEmbedUrl: 'https://datenknoten.me{{ page.url }}'
+        };
+
+        (function () {
+            var d = document.createElement('script');
+            d.type = 'text/javascript';
+            d.async = true;
+            d.src = DiscourseEmbed.discourseUrl + 'javascripts/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
+        })();
+    </script>
 {% endif %}

@@ -8,6 +8,7 @@
                     {{ p.menu }}
                 </a>
                 <i class="dropdown icon"></i>
+
                 <div class="menu">
                     <a class="item {{ current_page }}" href="{{ p.url }}">
                         {{ p.menu }}
@@ -25,8 +26,8 @@
     {% endfor %}
 {% endmacro %}
 
-<div class="ui attached segment">
-    <div class="ui blue menu">
+<div class="ui top fixed blue menu">
+    <div class="ui container">
         {{ _self.loop(pages) }}
         {% for mitem in site.menu %}
             <a class="item" href="{{ mitem.url }}">

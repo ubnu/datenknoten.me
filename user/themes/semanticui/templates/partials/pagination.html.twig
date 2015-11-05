@@ -1,6 +1,6 @@
 {% if pagination|length > 1 %}
     <div class="ui segment">
-        <div class="ui borderless pagination menu">
+        <div class="ui borderless pagination ten item fluid menu">
             {% if pagination.hasPrev %}
                 <a class="item" href="{{ base_url }}{{ pagination.params }}{{ pagination.prevUrl }}">&laquo;</a>
             {% else %}

@@ -17,25 +17,32 @@
     {% endblock head %}
 </head>
 <body id="top" class="ui basic segment id-{{ page.name|replace({'.':'_'}) }} {{ page.header.body_classes }}">
-{% block header %}
-    <header class="">
-        <h1 class="ui large top attached header"><a href="{{ base_url == '' ? '/' : base_url }}">{{ config.site.title }}</a></h1>
+<header class="ui stackable grid container">
+    <div class="sixteen wide column">
         {% include 'partials/navigation.html.twig' %}
-    </header>
-{% endblock %}
-{% block body %}
-  <section id="body" class="{% if not (page.route matches '#^/blog(.*)$#') %}ui segment {% endif %}{{ class }}">
-    {% block content %}{% endblock %}
-  </section>
-{% endblock %}
-{% block footer %}
-{% endblock %}
+    </div>
+</header>
+<main class="ui stackable grid container">
+    <section class="{% if page.route starts with '/blog' %}ten{% else %}sixteen{% endif %} wide column">
+        <div class="">
+            {% block content %}{% endblock %}
+        </div>
+    </section>
+    {% if page.route starts with '/blog' %}
+        <aside class="six wide column">
+            {% include 'partials/sidebar.html.twig' %}
+        </aside>
+    {% endif %}
+</main>
+<footer class="ui container">
+
+</footer>
 {% block bottom %}
     {% block javascripts %}
         {% do assets.addJs('jquery',101) %}
         {% do assets.addJs('theme://dist/semantic.js') %}
     {% endblock %}
-    {{ assets.js() }}  
+    {{ assets.js() }}
     <script>
         $(function () {
             $(document).ready(function () {
@@ -48,21 +55,25 @@
             });
         });
     </script>
-  {% endblock %}
+{% endblock %}
 <!-- Piwik -->
 <script type="text/javascript">
-  var _paq = _paq || [];
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="//stats.datenknoten.me/";
-    _paq.push(['setTrackerUrl', u+'piwik.php']);
-    _paq.push(['setSiteId', 4]);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-  })();
+    var _paq = _paq || [];
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function () {
+        var u = "//stats.datenknoten.me/";
+        _paq.push(['setTrackerUrl', u + 'piwik.php']);
+        _paq.push(['setSiteId', 4]);
+        var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+        g.type = 'text/javascript';
+        g.async = true;
+        g.defer = true;
+        g.src = u + 'piwik.js';
+        s.parentNode.insertBefore(g, s);
+    })();
 </script>
-<noscript><p><img src="//stats.datenknoten.me/piwik.php?idsite=4" style="border:0;" alt="" /></p></noscript>
+<noscript><p><img src="//stats.datenknoten.me/piwik.php?idsite=4" style="border:0;" alt=""/></p></noscript>
 <!-- End Piwik Code -->
 </body>
 </html>
