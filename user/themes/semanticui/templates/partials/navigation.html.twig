@@ -26,8 +26,11 @@
     {% endfor %}
 {% endmacro %}
 
-<div class="ui top fixed blue menu">
+<div class="ui top fixed menu">
     <div class="ui container">
+        <a class="logo item" href="/">
+            <img src="{{ url("theme://images/logo.png") }}" class="ui mini image" /> Datenknoten
+        </a>
         {{ _self.loop(pages) }}
         {% for mitem in site.menu %}
             <a class="item" href="{{ mitem.url }}">

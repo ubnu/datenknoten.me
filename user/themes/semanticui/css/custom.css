@@ -85,3 +85,7 @@ body,.ui.header, .ui.menu {
 code {
     font-family: "Source Code Pro",monospace;
 }
+
+.logo.item img {
+    padding-right: 1rem;
+}
