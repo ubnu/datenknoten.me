@@ -1,30 +1,15 @@
 {% set embed = embed|default(false) %}
 <div class="ui top attached segment">
-    {% if page.header.link %}
-        <h2 class="ui header">
-            {% if page.header.continue_link is not sameas(false) %}
-                <a href="{{ page.url }}"><i class="fa fa-angle-double-right"></i></a>
-            {% endif %}
-            <a href="{{ page.header.link }}">{{ page.title }}</a>
-        </h2>
-    {% else %}
-        <h2 class="ui header"><a href="{{ page.url }}">{{ page.title }}</a></h2>
-    {% endif %}
+    <h2 class="ui header"><a href="{{ page.url }}">{{ page.title }}</a></h2>
 </div>
 <div class="ui attached segment">
     <div class="content">
         <div class="description">
-            {% if truncate %}
-                {{ page.summary }}
-
-                <a href="{{ page.url }}">Weiter lesen…</a>
-            {% else %}
-                {{ page.content }}
-            {% endif %}
+            {{ page.content }}
         </div>
     </div>
 </div>
-<div class="ui attached segment">
+<div class="ui {% if embed %}bottom {% endif %}attached segment">
     <div class="meta">
         <div class="ui mini compact labeled icon button">
             <i class="calendar icon"></i>

@@ -19,7 +19,7 @@
             {% include 'partials/breadcrumbs.html.twig' %}
         {% endif %}
         {% for child in collection %}
-            {% include 'partials/blog_item.html.twig' with {'page':child, 'truncate':true, 'embed':true} %}
+            {% include 'partials/blog_item.html.twig' with {'page':child, 'embed':true} %}
         {% endfor %}
 
         {% include 'partials/pagination.html.twig' with {'pagination':collection.params.pagination} %}
