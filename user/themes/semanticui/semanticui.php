@@ -46,6 +46,10 @@ class SemanticUI extends Theme
                             if (!is_null($node->attributes->getNamedItem('data-instgrm-version'))) {
                                 continue;
                             }
+                            if (!is_null($node->attributes->getNamedItem('class'))) {
+                                continue;
+                            }
+
                         }
                         $node->setAttribute('class', 'ui testimonial');
                     }

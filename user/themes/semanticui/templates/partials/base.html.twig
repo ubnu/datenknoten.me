@@ -79,6 +79,23 @@
                             transition: 'drop'
                         })
                 ;
+
+            });
+            $(window).load(function () {
+                twttr.ready(
+                        function (twttr) {
+                            // bind events here
+                            twttr.events.bind(
+                                    'rendered',
+                                    function (event) {
+                                        var head = $(event.target).contents().find('body>div');
+                                        console.log(head);
+                                        head.css('max-width', 'inherit');
+                                        $(event.target).css('max-width', 'inherit');
+                                    }
+                            );
+                        }
+                );
             });
         });
     </script>
@@ -102,5 +119,6 @@
 </script>
 <noscript><p><img src="//stats.datenknoten.me/piwik.php?idsite=4" style="border:0;" alt=""/></p></noscript>
 <!-- End Piwik Code -->
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 </body>
 </html>
