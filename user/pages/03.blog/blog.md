@@ -12,12 +12,12 @@ content:
     order:
         by: date
         dir: desc
-    limit: 5
+    limit: 10
     pagination: true
 
 feed:
     description: Tims Blawg
-    limit: 10
+    limit: 20
 
 pagination: true
 ---
