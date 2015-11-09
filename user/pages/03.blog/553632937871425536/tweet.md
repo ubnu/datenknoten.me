@@ -1,5 +1,5 @@
 ---
-title: 2015: Niedergebrannte Dörfer, Anschläge auf Zeitungsredaktionen, Geiselnahmen in jüdischen Geschäften, erneut spürbarer Rechtsruck. Fuck.
+title: 2015: Niedergebrannte Dörfer, Anschläge auf Zeitungsredaktionen, Geiselnahmen in jüdischen Geschäften, erneut spürbarer Rechtsruck.  Fuck.
 date: Fri Jan 09 19:22:33 +0000 2015
 taxonomy:
     category: blog

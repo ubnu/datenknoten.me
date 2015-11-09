@@ -1,5 +1,5 @@
 ---
-title: This isn't Blade Runner. It's Beijing today. http://t.co/yo4XVE2RGp H/t @punodraws
+title: This isn't Blade Runner. It's Beijing today.  http://t.co/yo4XVE2RGp H/t @punodraws
 date: Thu Jan 15 21:09:26 +0000 2015
 taxonomy:
     category: blog

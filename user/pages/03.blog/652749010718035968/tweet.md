@@ -1,6 +1,5 @@
 ---
-title: Best homework excuse ever? http://t.co/GV8IjoGnCV
-#chemnobel http://t.co/9VYiZbESLE
+title: Best homework excuse ever? http://t.co/GV8IjoGnCV #chemnobel http://t.co/9VYiZbESLE
 date: Sat Oct 10 07:34:26 +0000 2015
 taxonomy:
     category: blog
