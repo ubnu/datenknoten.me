@@ -1,18 +1,19 @@
 {% set embed = embed|default(false) %}
-{% set tweet = embed|default(false) %}
+{% set tweet = tweet|default(false) %}
+<div class="ui segments">
 {% if not tweet %}
     <div class="ui top attached segment">
         <h2 class="ui header"><a href="{{ page.url }}">{{ page.title }}</a></h2>
     </div>
 {% endif %}
-<div class="ui attached segment">
+<div class="ui blue segment">
     <div class="content">
         <div class="description">
             {{ page.content }}
         </div>
     </div>
 </div>
-<div class="ui {% if embed %}bottom {% endif %}attached segment">
+<div class="ui blue {% if embed %}bottom {% endif %}attached segment">
     <div class="meta">
         <a class="ui mini compact labeled icon button" href="{{ page.url }}">
             <i class="calendar icon"></i>
@@ -53,3 +54,4 @@
         })();
     </script>
 {% endif %}
+</div>

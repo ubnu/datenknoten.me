@@ -19,7 +19,11 @@
             {% include 'partials/breadcrumbs.html.twig' %}
         {% endif %}
         {% for child in collection %}
-            {% include 'partials/blog_item.html.twig' with {'page':child, 'embed':true} %}
+            {% if child.name == 'tweet.md' %}
+                {% include 'partials/blog_item.html.twig' with {'page':child, 'embed':true, 'tweet' : true} %}
+            {% else %}
+                {% include 'partials/blog_item.html.twig' with {'page':child, 'embed':true, 'tweet' : false} %}
+            {% endif %}
         {% endfor %}
 
         {% include 'partials/pagination.html.twig' with {'pagination':collection.params.pagination} %}
