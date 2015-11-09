@@ -1,5 +1,5 @@
 ---
-title: "Papers, Please" is now available for iPad. 25%-off for a limited time. https://itunes.apple.com/us/app/papers-please/id935216956?ls=1&mt=8 http://t.co/8oIrgHPnyk
+title: „Papers, Please“ is now available for iPad. 25%-off for a limited time. https://itunes.apple.com/us/app/papers-please/id935216956?ls=1&mt=8 http://t.co/8oIrgHPnyk
 date: Sat Dec 13 13:05:52 +0000 2014
 taxonomy:
     category: blog
