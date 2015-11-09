@@ -1,9 +1,5 @@
 ---
-title: Ich hatte eine grobe Idee, der @0xaffe hat mit der Umsetzung begonnen. cc @ProAsyl  
-
-https://t.co/iNr5BBJnIJ  
-
-#refugees #diy
+title: Ich hatte eine grobe Idee, der @0xaffe hat mit der Umsetzung begonnen. cc @ProAsyl https://t.co/iNr5BBJnIJ #refugees #diy
 date: Tue Aug 25 07:04:13 +0000 2015
 taxonomy:
     category: blog

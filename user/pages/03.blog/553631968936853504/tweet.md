@@ -1,6 +1,5 @@
 ---
-title: Etwas Erheiterndes:
-Gestern Nacht geträumt, Gregor Gysi würde neben einer Edeka-Schlange einen Portwein klauen, daraus saufen und wegrennen.
+title: Etwas Erheiterndes: Gestern Nacht geträumt, Gregor Gysi würde neben einer Edeka-Schlange einen Portwein klauen, daraus saufen und wegrennen.
 date: Fri Jan 09 19:18:42 +0000 2015
 taxonomy:
     category: blog

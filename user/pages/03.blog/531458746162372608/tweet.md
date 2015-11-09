@@ -1,6 +1,5 @@
 ---
-title: Daft Punk - Interstella 5555 (full movie) 
-https://t.co/fn143JNME4 http://t.co/KKvrIkZpG0
+title: Daft Punk - Interstella 5555 (full movie) https://t.co/fn143JNME4 http://t.co/KKvrIkZpG0
 date: Sun Nov 09 14:50:13 +0000 2014
 taxonomy:
     category: blog

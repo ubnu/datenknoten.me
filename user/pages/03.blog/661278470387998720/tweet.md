@@ -1,6 +1,5 @@
 ---
-title: Holy Crap, They Are Officially Making a New Star Trek TV Series 
-https://t.co/u5TFjuFsHU
+title: Holy Crap, They Are Officially Making a New Star Trek TV Series https://t.co/u5TFjuFsHU
 date: Mon Nov 02 20:27:27 +0000 2015
 taxonomy:
     category: blog
