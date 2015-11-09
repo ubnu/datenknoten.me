@@ -1,7 +1,10 @@
 {% set embed = embed|default(false) %}
-<div class="ui top attached segment">
-    <h2 class="ui header"><a href="{{ page.url }}">{{ page.title }}</a></h2>
-</div>
+{% set tweet = embed|default(false) %}
+{% if not tweet %}
+    <div class="ui top attached segment">
+        <h2 class="ui header"><a href="{{ page.url }}">{{ page.title }}</a></h2>
+    </div>
+{% endif %}
 <div class="ui attached segment">
     <div class="content">
         <div class="description">
@@ -11,10 +14,10 @@
 </div>
 <div class="ui {% if embed %}bottom {% endif %}attached segment">
     <div class="meta">
-        <div class="ui mini compact labeled icon button">
+        <a class="ui mini compact labeled icon button" href="{{ page.url }}">
             <i class="calendar icon"></i>
             {{ page.date|date("Y-m-d") }}
-        </div>
+        </a>
         {% if page.taxonomy.tag %}
             {% for tag in page.taxonomy.tag %}
                 <a class="ui mini compact labeled icon button"
@@ -23,6 +26,12 @@
                     {{ tag }}
                 </a>
             {% endfor %}
+        {% endif %}
+        {% if tweet %}
+            <div class="ui mini compact labeled icon button">
+                <i class="twitter icon"></i>
+                #tweet
+            </div>
         {% endif %}
     </div>
 </div>
