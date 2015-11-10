@@ -3,7 +3,7 @@ title: Quarkbrötchen
 date: 20:00 11/10/2015
 taxonomy:
     category: blog
-    tag: [brötchen,backen]
+    tag: [brötchen,backen,rezept]
 ---
 
 Wer auf die schnelle ein paar Brötchen backen will, dem kann ich folgendes Rezept empfehlen:
