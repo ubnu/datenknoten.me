@@ -10,11 +10,11 @@ highlight:
 
 Folgende Problemstellung sei gegeben:
 
-Man hat ein Image für eine Debian-Instalation, das man auf einem Rechner (Dabei ist es egal ob echt oder virtuel) aufgespielt hat, kein Netzwerk definiert, man kennt aber die [MAC-Adresse](https://de.wikipedia.org/wiki/MAC-Adresse) des Netzwerk-Interfaces und will jetzt das Netzwerk konfigurieren.
+Man hat ein Image für eine Debian-Instalation, das man auf einem Rechner (Dabei ist es egal, ob echt oder virtuell) aufgespielt hat, kein Netzwerk definiert, man kennt aber die [MAC-Adresse](https://de.wikipedia.org/wiki/MAC-Adresse) des Netzwerk-Interfaces und will jetzt das Netzwerk konfigurieren.
  
 Die Lösung ist relativ einfach, da man über die MAC-Adresse die [IPv6-Link-Local-Adresse](https://de.wikipedia.org/wiki/IPv6#Link-Local-Adressen) berechnen kann, mit der man sich dann zum sshd des Rechners verbinden kann.
  
-Ich zeige nun wie ich das ganze über [Ansible](http://www.ansible.com/) gelöst habe.
+Ich zeige nun wie ich das Ganze über [Ansible](http://www.ansible.com/) gelöst habe.
 
 Meine Ordnerstruktur für mein Ansible-Setup sieht so aus:
 
@@ -34,7 +34,7 @@ Meine Ordnerstruktur für mein Ansible-Setup sieht so aus:
 |----> . sysctl.conf
 ```
 
-Nun werde ich die einzelnen Dateien erklären was sie tun.
+Nun werde ich erklären, was die einzelnen Dateien tun.
 
 Die Datei `hosts` sieht für dieses Beispiel so aus:
 
@@ -51,9 +51,9 @@ id: 4
 mac: 52:54:00:b8:e9:a1
 ```
 
-Das Feld `id` enthält eine Zahl die für die Berechnung der IPv4 NAT Adresse und der globalen IPv6 Adresse benutzt wird. Das Feld `mac` ist die MAC-Adresse des Rechners. Diese Adresse wird für die Berechnung der IPv6-Link-Local-Adresse benötigt.
+Das Feld `id` enthält eine Zahl, die für die Berechnung der IPv4 NAT Adresse und der globalen IPv6 Adresse benutzt wird. Das Feld `mac` ist die MAC-Adresse des Rechners. Diese Adresse wird für die Berechnung der IPv6-Link-Local-Adresse benötigt.
 
-Die Datei `conv_mac2ll.py` enthält ein Python-Skript das die eigentliche Berechnung vornimmt:
+Die Datei `conv_mac2ll.py` enthält ein Python-Skript, welches die eigentliche Berechnung vornimmt:
  
 ```
 #!/usr/local/bin/python
@@ -93,23 +93,23 @@ Mein eigentliches Playbook für den Netzwerkkram ist dadurch sehr übersichtlich
 
 ```
 
-Da ich die Playbooks auf einer FreeBSD Kiste ausführe heist das Netzwerk-Interface hier `vtnet0`. Unter Linux heist dieses aller Wahrscheinlichkeit nach `eth0`.
+Da ich die Playbooks auf einer FreeBSD Kiste ausführe, heißt das Netzwerk-Interface hier `vtnet0`. Unter Linux heißt dieses aller Wahrscheinlichkeit nach `eth0`.
 
-In der `sysctl.conf` deaktiviere ich das Router Advertisement, da ich alles hart verdrahte:
+In der `sysctl.conf` deaktiviere ich das Router Advertisement Protocol, da ich alles hart verdrahte:
  
 ```
 net.ipv6.conf.all.accept_ra=0
 net.ipv6.conf.all.autoconf=0
 ```
 
-Namensserver Konfiguration ist jetzt auch nicht weltbewegend:
+Die Namensserver-Konfiguration ist jetzt auch nicht weltbewegend:
 
 ```
 nameserver 192.168.122.9
 search int.datenknoten.me
 ```
 
-Und zum Schluss das wichtigste, die Netzwerkkonfiguration:
+Und zum Schluss das Wichtigste, die Netzwerkkonfiguration:
  
 ```
 auto lo
