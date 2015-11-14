@@ -103,3 +103,7 @@ code {
     width: 100%;
     height: 100%;
 }
+
+.fb-post, .fb-post iframe[style], .fb-post span {
+    width: 100% !important;
+}
