@@ -43,3 +43,5 @@ debugger:
 plugins:
   highlight:
     theme: solarized_dark
+  pagination:
+    delta: 10
