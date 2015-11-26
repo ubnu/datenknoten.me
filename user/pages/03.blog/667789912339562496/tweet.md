@@ -1,5 +1,5 @@
 ---
-title: "Let us support the Islamic State against the imperialist holy alliance“ Italian Marxist-Leninist Party Keine Pointe.
+title: „Let us support the Islamic State against the imperialist holy alliance“ Italian Marxist-Leninist Party Keine Pointe.
 date: Fri Nov 20 19:41:36 +0000 2015
 taxonomy:
     category: blog
