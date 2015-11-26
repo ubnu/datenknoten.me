@@ -1,5 +1,5 @@
 ---
-title: "Wer hat es gesagt? Xavier Naidoo, Erika Steinbach oder Lutz Bachmann?" http://www.buzzfeed.com/annadushime/quiz-xavier-naidoo-erika-steinbach-oder-lutz-ba#.krObXDYxo
+title: „Wer hat es gesagt? Xavier Naidoo, Erika Steinbach oder Lutz Bachmann?“ http://www.buzzfeed.com/annadushime/quiz-xavier-naidoo-erika-steinbach-oder-lutz-ba#.krObXDYxo
 date: Thu Nov 19 17:35:21 +0000 2015
 taxonomy:
     category: blog
