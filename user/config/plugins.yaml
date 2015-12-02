@@ -1,0 +1,4 @@
+highlight:
+  theme: solarized_dark
+pagination:
+  delta: 5

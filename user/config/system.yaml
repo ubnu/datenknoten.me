@@ -40,8 +40,3 @@ debugger:
   shutdown:
     close_connection: true
 
-plugins:
-  highlight:
-    theme: solarized_dark
-  pagination:
-    delta: 10
