@@ -1,6 +1,11 @@
 <?php
 namespace Grav\Common;
 
+use DateTime;
+use DateTimeZone;
+use Grav\Common\Helpers\Truncator;
+use RocketTheme\Toolbox\Event\Event;
+
 /**
  * Misc utilities.
  *
@@ -8,24 +13,78 @@ namespace Grav\Common;
  */
 abstract class Utils
 {
+    use GravTrait;
+
     /**
-     * @param  string  $haystack
-     * @param  string  $needle
+     * @param  string $haystack
+     * @param  string $needle
+     *
      * @return bool
      */
     public static function startsWith($haystack, $needle)
     {
+        if (is_array($needle)) {
+            $status = false;
+            foreach ($needle as $each_needle) {
+                $status = $status || ($each_needle === '' || strpos($haystack, $each_needle) === 0);
+                if ($status) {
+                    return $status;
+                }
+            }
+
+            return $status;
+        }
+
         return $needle === '' || strpos($haystack, $needle) === 0;
     }
 
     /**
-     * @param  string  $haystack
-     * @param  string  $needle
+     * @param  string $haystack
+     * @param  string $needle
+     *
      * @return bool
      */
     public static function endsWith($haystack, $needle)
     {
+        if (is_array($needle)) {
+            $status = false;
+            foreach ($needle as $each_needle) {
+                $status = $status || ($each_needle === '' || substr($haystack, -strlen($each_needle)) === $each_needle);
+                if ($status) {
+                    return $status;
+                }
+            }
+
+            return $status;
+        }
+
         return $needle === '' || substr($haystack, -strlen($needle)) === $needle;
+    }
+
+    /**
+     * @param  string $haystack
+     * @param  string $needle
+     *
+     * @return bool
+     */
+    public static function contains($haystack, $needle)
+    {
+        return $needle === '' || strpos($haystack, $needle) !== false;
+    }
+
+    /**
+     * Returns the substring of a string up to a specified needle.  if not found, return the whole haytack
+     *
+     * @param $haystack
+     * @param $needle
+     * @return string
+     */
+    public static function substrToString($haystack, $needle)
+    {
+        if (static::contains($haystack, $needle)) {
+            return substr($haystack, 0, strpos($haystack,$needle));
+        }
+        return $haystack;
     }
 
     /**
@@ -33,134 +92,299 @@ abstract class Utils
      *
      * @param  object $obj1
      * @param  object $obj2
+     *
      * @return object
      */
     public static function mergeObjects($obj1, $obj2)
     {
-        return (object) array_merge((array) $obj1, (array) $obj2);
+        return (object)array_merge((array)$obj1, (array)$obj2);
+    }
+
+    public static function dateFormats()
+    {
+        $now = new DateTime();
+
+        $date_formats = [
+            'd-m-Y H:i' => 'd-m-Y H:i (e.g. '.$now->format('d-m-Y H:i').')',
+            'Y-m-d H:i' => 'Y-m-d H:i (e.g. '.$now->format('Y-m-d H:i').')',
+            'm/d/Y h:i a' => 'm/d/Y h:i (e.g. '.$now->format('m/d/Y h:i a').')',
+            'H:i d-m-Y' => 'H:i d-m-Y (e.g. '.$now->format('H:i d-m-Y').')',
+            'h:i a m/d/Y' => 'h:i a m/d/Y (e.g. '.$now->format('h:i a m/d/Y').')',
+            ];
+        $default_format = self::getGrav()['config']->get('system.pages.dateformat.default');
+        if ($default_format) {
+            $date_formats = array_merge([$default_format => $default_format.' (e.g. '.$now->format($default_format).')'], $date_formats);
+        }
+        return $date_formats;
     }
 
     /**
-     * Recurseive remove a directory - DANGEROUS! USE WITH CARE!!!!
+     * Truncate text by number of characters but can cut off words.
      *
-     * @param $dir
-     * @return bool
+     * @param  string $string
+     * @param  int $limit Max number of characters.
+     * @param  bool $up_to_break truncate up to breakpoint after char count
+     * @param  string $break Break point.
+     * @param  string $pad Appended padding to the end of the string.
+     * @return string
      */
-    public static function rrmdir($dir) {
-        $files = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST
-        );
-
-        /** @var \DirectoryIterator $fileinfo */
-        foreach ($files as $fileinfo) {
-            if ($fileinfo->isDir()) {
-                if (false === rmdir($fileinfo->getRealPath())) return false;
-            } else {
-                if (false === unlink($fileinfo->getRealPath())) return false;
-            }
+    public static function truncate($string, $limit = 150, $up_to_break = false, $break = " ", $pad = "&hellip;")
+    {
+        // return with no change if string is shorter than $limit
+        if (mb_strlen($string) <= $limit) {
+            return $string;
         }
 
-        return rmdir($dir);
+        // is $break present between $limit and the end of the string?
+        if ($up_to_break && false !== ($breakpoint = mb_strpos($string, $break, $limit))) {
+            if ($breakpoint < mb_strlen($string) - 1) {
+                $string = mb_substr($string, 0, $breakpoint) . $break;
+            }
+        } else {
+            $string = mb_substr($string, 0, $limit) . $pad;
+        }
+
+        return $string;
     }
 
     /**
-     * Truncate HTML by text length.
+     * Truncate text by number of characters in a "word-safe" manor.
+     *
+     * @param $string
+     * @param int $limit
+     * @return string
+     */
+    public static function safeTruncate($string, $limit = 150)
+    {
+        return static::truncate($string, $limit, true);
+    }
+
+
+    /**
+     * Truncate HTML by number of characters. not "word-safe"!
      *
      * @param  string $text
      * @param  int    $length
-     * @param  string $ending
-     * @param  bool   $exact
-     * @param  bool   $considerHtml
+     *
      * @return string
      */
-    public static function truncateHtml($text, $length = 100, $ending = '...', $exact = false, $considerHtml = true) {
-        $open_tags = array();
-        if ($considerHtml) {
-            // if the plain text is shorter than the maximum length, return the whole text
-            if (strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
-                return $text;
+    public static function truncateHtml($text, $length = 100)
+    {
+        return Truncator::truncate($text, $length, array('length_in_chars' => true));
+    }
+
+    /**
+     * Truncate HTML by number of characters in a "word-safe" manor.
+     *
+     * @param  string $text
+     * @param  int    $length
+     *
+     * @return string
+     */
+    public static function safeTruncateHtml($text, $length = 100)
+    {
+        return Truncator::truncate($text, $length, array('length_in_chars' => true, 'word_safe' => true));
+    }
+
+    /**
+     * Generate a random string of a given length
+     *
+     * @param int $length
+     *
+     * @return string
+     */
+    public static function generateRandomString($length = 5)
+    {
+        return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
+    }
+
+    /**
+     * Provides the ability to download a file to the browser
+     *
+     * @param      $file            the full path to the file to be downloaded
+     * @param bool $force_download  as opposed to letting browser choose if to download or render
+     */
+    public static function download($file, $force_download = true)
+    {
+        if (file_exists($file)) {
+            // fire download event
+            self::getGrav()->fireEvent('onBeforeDownload', new Event(['file' => $file]));
+
+            $file_parts = pathinfo($file);
+            $filesize = filesize($file);
+
+            // check if this function is available, if so use it to stop any timeouts
+            if (function_exists('set_time_limit')) {
+                set_time_limit(0);
             }
-            // splits all html-tags to scanable lines
-            preg_match_all('/(<.+?>)?([^<>]*)/s', $text, $lines, PREG_SET_ORDER);
-            $total_length = strlen($ending);
-            $truncate = '';
-            foreach ($lines as $line_matchings) {
-                // if there is any html-tag in this line, handle it and add it (uncounted) to the output
-                if (!empty($line_matchings[1])) {
-                    // if it's an "empty element" with or without xhtml-conform closing slash
-                    if (preg_match('/^<(\s*.+?\/\s*|\s*(img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param)(\s.+?)?)>$/is', $line_matchings[1])) {
-                        // do nothing
-                    // if tag is a closing tag
-                    } else if (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
-                        // delete tag from $open_tags list
-                        $pos = array_search($tag_matchings[1], $open_tags);
-                        if ($pos !== false) {
-                            unset($open_tags[$pos]);
-                        }
-                    // if tag is an opening tag
-                    } else if (preg_match('/^<\s*([^\s>!]+).*?>$/s', $line_matchings[1], $tag_matchings)) {
-                        // add tag to the beginning of $open_tags list
-                        array_unshift($open_tags, strtolower($tag_matchings[1]));
-                    }
-                    // add html-tag to $truncate'd text
-                    $truncate .= $line_matchings[1];
-                }
-                // calculate the length of the plain text part of the line; handle entities as one character
-                $content_length = strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', ' ', $line_matchings[2]));
-                if ($total_length+$content_length> $length) {
-                    // the number of characters which are left
-                    $left = $length - $total_length;
-                    $entities_length = 0;
-                    // search for html entities
-                    if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', $line_matchings[2], $entities, PREG_OFFSET_CAPTURE)) {
-                        // calculate the real length of all entities in the legal range
-                        foreach ($entities[0] as $entity) {
-                            if ($entity[1]+1-$entities_length <= $left) {
-                                $left--;
-                                $entities_length += strlen($entity[0]);
-                            } else {
-                                // no more characters left
-                                break;
-                            }
-                        }
-                    }
-                    $truncate .= substr($line_matchings[2], 0, $left+$entities_length);
-                    // maximum length is reached, so get off the loop
-                    break;
-                } else {
-                    $truncate .= $line_matchings[2];
-                    $total_length += $content_length;
-                }
-                // if the maximum length is reached, get off the loop
-                if ($total_length >= $length) {
-                    break;
-                }
-            }
-        } else {
-            if (strlen($text) <= $length) {
-                return $text;
+
+            ignore_user_abort(false);
+
+            if ($force_download) {
+                header('Content-Description: File Transfer');
+                header('Content-Type: application/octet-stream');
+                header('Content-Disposition: attachment; filename=' . $file_parts['basename']);
+                header('Content-Transfer-Encoding: binary');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                header('Pragma: public');
             } else {
-                $truncate = substr($text, 0, $length - strlen($ending));
+                header("Content-Type: " . Utils::getMimeType($file_parts['extension']));
+            }
+            header('Content-Length: ' . $filesize);
+
+            // 8kb chunks for now
+            $chunk = 8 * 1024;
+
+            $fh = fopen($file, "rb");
+
+            if ($fh === false) {
+                return;
+            }
+
+            // Repeat reading until EOF
+            while (!feof($fh)) {
+                echo fread($fh, $chunk);
+
+                ob_flush();  // flush output
+                flush();
+            }
+
+            exit;
+        }
+    }
+
+    /**
+     * Return the mimetype based on filename
+     *
+     * @param $extension Extension of file (eg .txt)
+     *
+     * @return string
+     */
+    public static function getMimeType($extension)
+    {
+        $extension = strtolower($extension);
+        $config = self::getGrav()['config']->get('media');
+
+        if (isset($config[$extension])) {
+            return $config[$extension]['mime'];
+        }
+
+        return 'application/octet-stream';
+    }
+
+    /**
+     * Normalize path by processing relative `.` and `..` syntax and merging path
+     *
+     * @param $path
+     *
+     * @return string
+     */
+    public static function normalizePath($path)
+    {
+        $root = ($path[0] === '/') ? '/' : '';
+
+        $segments = explode('/', trim($path, '/'));
+        $ret = array();
+        foreach ($segments as $segment) {
+            if (($segment == '.') || empty($segment)) {
+                continue;
+            }
+            if ($segment == '..') {
+                array_pop($ret);
+            } else {
+                array_push($ret, $segment);
             }
         }
-        // if the words shouldn't be cut in the middle...
-        if (!$exact) {
-            // ...search the last occurance of a space...
-            $spacepos = strrpos($truncate, ' ');
-            if (isset($spacepos)) {
-                // ...and cut the text in this position
-                $truncate = substr($truncate, 0, $spacepos);
+
+        return $root . implode('/', $ret);
+    }
+
+    public static function timezones()
+    {
+        $timezones = \DateTimeZone::listIdentifiers(\DateTimeZone::ALL);
+        $offsets = [];
+        $testDate = new \DateTime;
+
+        foreach ($timezones as $zone) {
+            $tz = new \DateTimeZone($zone);
+            $offsets[$zone] = $tz->getOffset($testDate);
+        }
+
+        asort($offsets);
+
+        $timezone_list = array();
+        foreach ($offsets as $timezone => $offset) {
+            $offset_prefix = $offset < 0 ? '-' : '+';
+            $offset_formatted = gmdate('H:i', abs($offset));
+
+            $pretty_offset = "UTC${offset_prefix}${offset_formatted}";
+
+            $timezone_list[$timezone] = "(${pretty_offset}) $timezone";
+        }
+
+        return $timezone_list;
+
+    }
+
+    public static function arrayFilterRecursive(Array $source, $fn)
+    {
+        $result = array();
+        foreach ($source as $key => $value)
+        {
+            if (is_array($value))
+            {
+                $result[$key] = static::arrayFilterRecursive($value, $fn);
+                continue;
+            }
+            if ($fn($key, $value))
+            {
+                $result[$key] = $value; // KEEP
+                continue;
             }
         }
-        // add the defined ending to the text
-        $truncate .= $ending;
-        if ($considerHtml) {
-            // close all unclosed html-tags
-            foreach ($open_tags as $tag) {
-                $truncate .= '</' . $tag . '>';
-            }
+        return $result;
+    }
+
+    public static function pathPrefixedByLangCode($string)
+    {
+        $languages_enabled = self::getGrav()['config']->get('system.languages.supported', []);
+
+        if ($string[0] == '/' && $string[3] == '/' && in_array(substr($string, 1, 2), $languages_enabled)) {
+            return true;
         }
-        return $truncate;
+
+        return false;
+    }
+
+    public static function date2timestamp($date)
+    {
+        $config = self::getGrav()['config'];
+        $default_dateformat = $config->get('system.pages.dateformat.default');
+
+        // try to use DateTime and default format
+        if ($default_dateformat) {
+            $datetime = DateTime::createFromFormat($default_dateformat, $date);
+        } else {
+            $datetime = new DateTime($date);
+        }
+
+        // fallback to strtotime if DateTime approach failed
+        if ($datetime !== false) {
+            return $datetime->getTimestamp();
+        } else {
+            return strtotime($date);
+        }
+    }
+
+    /**
+     * Checks if a value is positive
+     *
+     * @param string $value
+     *
+     * @return boolean
+     */
+    public static function isPositive($value) {
+        return in_array($value, [true, 1, '1', 'yes', 'on', 'true'], true);
     }
 }

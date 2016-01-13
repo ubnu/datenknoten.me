@@ -2,9 +2,6 @@
 namespace Grav\Common\Service;
 
 use Grav\Common\Config\Config;
-use Grav\Common\Grav;
-use Grav\Common\Uri;
-use Grav\Common\Filesystem\Folder;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use RocketTheme\Toolbox\Blueprints\Blueprints;
@@ -18,10 +15,16 @@ use RocketTheme\Toolbox\Blueprints\Blueprints;
 class ConfigServiceProvider implements ServiceProviderInterface
 {
     private $environment;
+    private $setup;
 
     public function register(Container $container)
     {
         $self = $this;
+
+        // Pre-load setup.php as it contains our initial configuration.
+        $file = GRAV_ROOT . '/setup.php';
+        $this->setup = is_file($file) ? (array) include $file : [];
+        $this->environment = isset($this->setup['environment']) ? $this->setup['environment'] : null;
 
         $container['blueprints'] = function ($c) use ($self) {
             return $self->loadMasterBlueprints($c);
@@ -35,20 +38,8 @@ class ConfigServiceProvider implements ServiceProviderInterface
     public function loadMasterConfig(Container $container)
     {
         $environment = $this->getEnvironment($container);
-        $file = CACHE_DIR . 'compiled/config/master-'.$environment.'.php';
-        $data = is_file($file) ? (array) include $file : [];
-        if ($data) {
-            try {
-                $config = new Config($data, $container, $environment);
-            } catch (\Exception $e) {
-            }
-        }
 
-        if (!isset($config)) {
-            $file = GRAV_ROOT . '/setup.php';
-            $data = is_file($file) ? (array) include $file : [];
-            $config = new Config($data, $container, $environment);
-        }
+        $config = new Config($this->setup, $container, $environment);
 
         return $config;
     }

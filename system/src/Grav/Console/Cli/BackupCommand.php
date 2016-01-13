@@ -1,14 +1,15 @@
 <?php
 namespace Grav\Console\Cli;
 
+use Grav\Common\Backup\ZipBackup;
+use Grav\Console\ConsoleTrait;
+use RocketTheme\Toolbox\File\JsonFile;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class BackupCommand
@@ -16,14 +17,9 @@ use Symfony\Component\Yaml\Yaml;
  */
 class BackupCommand extends Command
 {
+    use ConsoleTrait;
 
-    /**
-     * @var
-     */
     protected $source;
-    /**
-     * @var
-     */
     protected $progress;
 
     /**
@@ -36,12 +32,11 @@ class BackupCommand extends Command
             ->addArgument(
                 'destination',
                 InputArgument::OPTIONAL,
-                'Where to store the backup'
+                'Where to store the backup (/backup is default)'
 
             )
             ->setDescription("Creates a backup of the Grav instance")
             ->setHelp('The <info>backup</info> creates a zipped backup. Optionally can be saved in a different destination.');
-
 
         $this->source = getcwd();
     }
@@ -54,33 +49,23 @@ class BackupCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->getFormatter()->setStyle('red', new OutputFormatterStyle('red'));
-        $output->getFormatter()->setStyle('cyan', new OutputFormatterStyle('cyan'));
-        $output->getFormatter()->setStyle('green', new OutputFormatterStyle('green'));
-        $output->getFormatter()->setStyle('magenta', new OutputFormatterStyle('magenta'));
+        $this->setupConsole($input, $output);
 
         $this->progress = new ProgressBar($output);
         $this->progress->setFormat('Archiving <cyan>%current%</cyan> files [<green>%bar%</green>] %elapsed:6s% %memory:6s%');
 
-        $name = basename($this->source);
-        $dir = dirname($this->source);
-        $date = date('YmdHis', time());
-        $filename = $name . '-' . $date . '.zip';
+        self::getGrav()['config']->init();
 
-        $destination = ($input->getArgument('destination')) ? $input->getArgument('destination') : ROOT_DIR;
-        $destination = rtrim($destination, DS) . DS . $filename;
+        $destination = ($input->getArgument('destination')) ? $input->getArgument('destination') : null;
+        $log = JsonFile::instance(self::getGrav()['locator']->findResource("log://backup.log", true, true));
+        $backup = ZipBackup::backup($destination, [$this, 'output']);
 
-        $output->writeln('');
-        $output->writeln('Creating new Backup "' . $destination . '"');
-        $this->progress->start();
+        $log->content([
+            'time' => time(),
+            'location' => $backup
+        ]);
+        $log->save();
 
-        $zip = new \ZipArchive();
-        $zip->open($destination, \ZipArchive::CREATE);
-        $zip->addEmptyDir($name);
-
-        $this->folderToZip($this->source, $zip, strlen($dir . DS), $this->progress);
-        $zip->close();
-        $this->progress->finish();
         $output->writeln('');
         $output->writeln('');
 
@@ -92,25 +77,21 @@ class BackupCommand extends Command
      * @param $exclusiveLength
      * @param $progress
      */
-    private static function folderToZip($folder, \ZipArchive &$zipFile, $exclusiveLength, ProgressBar $progress)
+    public function output($args)
     {
-        $handle = opendir($folder);
-        while (false !== $f = readdir($handle)) {
-            if ($f != '.' && $f != '..') {
-                $filePath = "$folder/$f";
-                // Remove prefix from file path before add to zip.
-                $localPath = substr($filePath, $exclusiveLength);
-                if (is_file($filePath)) {
-                    $zipFile->addFile($filePath, $localPath);
-                    $progress->advance();
-                } elseif (is_dir($filePath)) {
-                    // Add sub-directory.
-                    $zipFile->addEmptyDir($localPath);
-                    self::folderToZip($filePath, $zipFile, $exclusiveLength, $progress);
+        switch ($args['type']) {
+            case 'message':
+                $this->output->writeln($args['message']);
+                break;
+            case 'progress':
+                if ($args['complete']) {
+                    $this->progress->finish();
+                } else {
+                    $this->progress->advance();
                 }
-            }
+                break;
         }
-        closedir($handle);
     }
+
 }
 

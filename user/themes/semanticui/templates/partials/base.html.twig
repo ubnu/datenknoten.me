@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    {% block head %}
+        <meta charset="utf-8"/>
+        <title>{% if header.title %}{{ header.title|e('html') }} | {% endif %}{{ site.title|e('html') }}</title>
+        {% include 'partials/metadata.html.twig' %}
+
+        <meta property="og:title"
+              content="{% if header.title %}{{ header.title|e('html') }} | {% endif %}{{ site.title|e('html') }}">
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="{{ site.title|e('html') }}">
+        <meta property="og:description" content="{{ page.summary|striptags|replace({'\n':''}) }}">
+        <meta property="og:image" content="https://datenknoten.me{{ url("theme://images/logo.png") }}">
+
+        <link rel="apple-touch-icon" sizes="57x57" href="{{ url("theme://favicon/apple-icon-57x57.png") }}">
+        <link rel="apple-touch-icon" sizes="60x60" href="{{ url("theme://favicon/apple-icon-60x60.png") }}">
+        <link rel="apple-touch-icon" sizes="72x72" href="{{ url("theme://favicon/apple-icon-72x72.png") }}">
+        <link rel="apple-touch-icon" sizes="76x76" href="{{ url("theme://favicon/apple-icon-76x76.png") }}">
+        <link rel="apple-touch-icon" sizes="114x114" href="{{ url("theme://favicon/apple-icon-114x114.png") }}">
+        <link rel="apple-touch-icon" sizes="120x120" href="{{ url("theme://favicon/apple-icon-120x120.png") }}">
+        <link rel="apple-touch-icon" sizes="144x144" href="{{ url("theme://favicon/apple-icon-144x144.png") }}">
+        <link rel="apple-touch-icon" sizes="152x152" href="{{ url("theme://favicon/apple-icon-152x152.png") }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ url("theme://favicon/apple-icon-180x180.png") }}">
+        <link rel="icon" type="image/png" sizes="192x192"  href="{{ url("theme://favicon/android-icon-192x192.png") }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ url("theme://favicon/favicon-32x32.png") }}">
+        <link rel="icon" type="image/png" sizes="96x96" href="{{ url("theme://favicon/favicon-96x96.png") }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ url("theme://favicon/favicon-16x16.png") }}">
+        <link rel="manifest" href="{{ url("theme://favicon/manifest.json") }}">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="{{ url("theme://favicon/ms-icon-144x144.png") }}">
+        <meta name="theme-color" content="#ffffff">
+
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <link rel="icon" type="image/png" href="{{ url('theme://images/favicon.png') }}"/>
+        <link href='https://fonts.googleapis.com/css?family=Dosis:400,700' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400' rel='stylesheet' type='text/css'>
+        {% block stylesheets %}
+            {% do assets.addCss('theme://dist/semantic.css',100) %}
+            {% do assets.addCss('theme://css/custom.css',99) %}
+        {% endblock %}
+        {{ assets.css() }}
+    {% endblock head %}
+</head>
+<body id="top" class="ui basic segment id-{{ page.name|replace({'.':'_'}) }} {{ page.header.body_classes }}">
+<header class="ui stackable grid container">
+    <div class="sixteen wide column">
+        {% include 'partials/navigation.html.twig' %}
+    </div>
+</header>
+<main class="ui stackable grid container">
+    <section class="{% if page.route starts with '/blog' %}ten{% else %}sixteen{% endif %} wide column">
+        <div class="">
+            {% block content %}{% endblock %}
+        </div>
+    </section>
+    {% if page.route starts with '/blog' %}
+        <aside class="six wide column">
+            {% include 'partials/sidebar.html.twig' %}
+        </aside>
+    {% endif %}
+</main>
+<footer class="ui container">
+
+</footer>
+{% block bottom %}
+    {% block javascripts %}
+        {% do assets.addJs('jquery',101) %}
+        {% do assets.addJs('theme://dist/semantic.js') %}
+    {% endblock %}
+    {{ assets.js() }}
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                $('.dropdown')
+                        .dropdown({
+                            // you can use any ui transition
+                            transition: 'drop'
+                        })
+                ;
+
+            });
+            $(window).load(function () {
+                twttr.ready(
+                        function (twttr) {
+                            // bind events here
+                            twttr.events.bind(
+                                    'rendered',
+                                    function (event) {
+                                        var head = $(event.target).contents().find('body>div');
+                                        console.log(head);
+                                        head.css('max-width', 'inherit');
+                                        $(event.target).css('max-width', 'inherit');
+                                    }
+                            );
+                        }
+                );
+            });
+        });
+    </script>
+{% endblock %}
+<!-- Piwik -->
+<script type="text/javascript">
+    var _paq = _paq || [];
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function () {
+        var u = "//stats.datenknoten.me/";
+        _paq.push(['setTrackerUrl', u + 'piwik.php']);
+        _paq.push(['setSiteId', 4]);
+        var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+        g.type = 'text/javascript';
+        g.async = true;
+        g.defer = true;
+        g.src = u + 'piwik.js';
+        s.parentNode.insertBefore(g, s);
+    })();
+</script>
+<noscript><p><img src="//stats.datenknoten.me/piwik.php?idsite=4" style="border:0;" alt=""/></p></noscript>
+<!-- End Piwik Code -->
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</body>
+</html>

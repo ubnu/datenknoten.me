@@ -4,6 +4,7 @@ namespace Grav\Common;
 use Grav\Common\Config\Config;
 use Grav\Common\Data\Blueprints;
 use Grav\Common\Data\Data;
+use Grav\Common\GravTrait;
 use Grav\Common\File\CompiledYamlFile;
 use RocketTheme\Toolbox\Event\EventDispatcher;
 use RocketTheme\Toolbox\Event\EventSubscriberInterface;
@@ -17,11 +18,7 @@ use RocketTheme\Toolbox\Event\EventSubscriberInterface;
  */
 class Plugins extends Iterator
 {
-    protected $grav;
-
-    public function __construct(Grav $grav) {
-        $this->grav = $grav;
-    }
+    use GravTrait;
 
     /**
      * Recurses through the plugins directory creating Plugin objects for each plugin it finds.
@@ -32,11 +29,13 @@ class Plugins extends Iterator
     public function init()
     {
         /** @var Config $config */
-        $config = $this->grav['config'];
+        $config = self::getGrav()['config'];
         $plugins = (array) $config->get('plugins');
 
+        $inflector = self::getGrav()['inflector'];
+
         /** @var EventDispatcher $events */
-        $events = $this->grav['events'];
+        $events = self::getGrav()['events'];
 
         foreach ($plugins as $plugin => $data) {
             if (empty($data['enabled'])) {
@@ -44,20 +43,33 @@ class Plugins extends Iterator
                 continue;
             }
 
-            $filePath = $this->grav['locator']('plugins://' . $plugin . DS . $plugin . PLUGIN_EXT);
+            $locator = self::getGrav()['locator'];
+            $filePath = $locator->findResource('plugins://' . $plugin . DS . $plugin . PLUGIN_EXT);
             if (!is_file($filePath)) {
-                throw new \RuntimeException(sprintf("Plugin '%s' enabled but not found! Try clearing cache with `bin/grav clear-cache`", $plugin));
+                self::getGrav()['log']->addWarning(sprintf("Plugin '%s' enabled but not found! Try clearing cache with `bin/grav clear-cache`", $plugin));
+                continue;
             }
 
             require_once $filePath;
 
-            $pluginClass = 'Grav\\Plugin\\'.ucfirst($plugin).'Plugin';
+            $pluginClassFormat = [
+                'Grav\\Plugin\\'.ucfirst($plugin).'Plugin',
+                'Grav\\Plugin\\'.$inflector->camelize($plugin).'Plugin'
+            ];
+            $pluginClassName = false;
 
-            if (!class_exists($pluginClass)) {
+            foreach ($pluginClassFormat as $pluginClass) {
+                if (class_exists($pluginClass)) {
+                    $pluginClassName = $pluginClass;
+                    break;
+                }
+            }
+
+            if (false === $pluginClassName) {
                 throw new \RuntimeException(sprintf("Plugin '%s' class not found! Try reinstalling this plugin.", $plugin));
             }
 
-            $instance = new $pluginClass($this->grav, $config);
+            $instance = new $pluginClassName($plugin, self::getGrav(), $config);
             if ($instance instanceof EventSubscriberInterface) {
                 $events->addSubscriber($instance);
             }
@@ -78,30 +90,34 @@ class Plugins extends Iterator
      *
      * @return array
      */
-    static public function all()
+    public static function all()
     {
         $list = array();
-        $iterator = new \DirectoryIterator('plugins://');
+        $locator = Grav::instance()['locator'];
 
-        /** @var \DirectoryIterator $directory */
-        foreach ($iterator as $directory) {
-            if (!$directory->isDir() || $directory->isDot()) {
-                continue;
+        $plugins = (array) $locator->findResources('plugins://', false);
+        foreach ($plugins as $path) {
+            $iterator = new \DirectoryIterator($path);
+
+            /** @var \DirectoryIterator $directory */
+            foreach ($iterator as $directory) {
+                if (!$directory->isDir() || $directory->isDot()) {
+                    continue;
+                }
+
+                $type = $directory->getBasename();
+                $list[$type] = self::get($type);
             }
-
-            $type = $directory->getBasename();
-            $list[$type] = self::get($type);
         }
-
         ksort($list);
 
         return $list;
     }
 
-    static public function get($name)
+    public static function get($name)
     {
-        $blueprints = new Blueprints("plugins://{$name}");
-        $blueprint = $blueprints->get('blueprints');
+        $blueprints = new Blueprints('plugins://');
+        $blueprint = $blueprints->get("{$name}/blueprints");
         $blueprint->name = $name;
 
         // Load default configuration.
@@ -109,12 +125,13 @@ class Plugins extends Iterator
         $obj = new Data($file->content(), $blueprint);
 
         // Override with user configuration.
-        $file = CompiledYamlFile::instance("user://config/plugins/{$name}.yaml");
-        $obj->merge($file->content());
+        $obj->merge(self::getGrav()['config']->get('plugins.' . $name) ?: []);
 
         // Save configuration always to user/config.
+        $file = CompiledYamlFile::instance("config://plugins/{$name}.yaml");
         $obj->file($file);
 
         return $obj;
     }
+
 }

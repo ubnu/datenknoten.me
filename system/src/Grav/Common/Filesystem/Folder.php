@@ -19,12 +19,13 @@ abstract class Folder
     {
         $last_modified = 0;
 
-        $directory = new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS);
-        $iterator = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::SELF_FIRST);
+        $dirItr     = new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS);
+        $filterItr  = new RecursiveFolderFilterIterator($dirItr);
+        $itr        = new \RecursiveIteratorIterator($filterItr, \RecursiveIteratorIterator::SELF_FIRST);
 
         /** @var \RecursiveDirectoryIterator $file */
-        foreach ($iterator as $file) {
-            $dir_modified = $file->getMTime();
+        foreach ($itr as $dir) {
+            $dir_modified = $dir->getMTime();
             if ($dir_modified > $last_modified) {
                 $last_modified = $dir_modified;
             }
@@ -33,33 +34,24 @@ abstract class Folder
         return $last_modified;
     }
 
-
-    public static function getRelativePath($to, $from = ROOT_DIR)
-    {
-        $from = preg_replace('![\\|/]+!', '/', $from);
-        $to = preg_replace('![\\|/]+!', '/', $to);
-        if (strpos($to, $from) === 0) {
-            $to = substr($to, strlen($from));
-        }
-
-        return $to;
-    }
     /**
      * Recursively find the last modified time under given path by file.
      *
      * @param  string $path
+     * @param string  $extensions   which files to search for specifically
+     *
      * @return int
      */
-    public static function lastModifiedFile($path)
+    public static function lastModifiedFile($path, $extensions = 'md|yaml')
     {
         $last_modified = 0;
 
-        $dirItr    = new \RecursiveDirectoryIterator($path);
-        $filterItr = new GravRecursiveFilterIterator($dirItr);
-        $itr       = new \RecursiveIteratorIterator($filterItr, \RecursiveIteratorIterator::SELF_FIRST);
+        $dirItr = new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS);
+        $itrItr = new \RecursiveIteratorIterator($dirItr, \RecursiveIteratorIterator::SELF_FIRST);
+        $itr = new \RegexIterator($itrItr, '/^.+\.'.$extensions.'$/i');
 
         /** @var \RecursiveDirectoryIterator $file */
-        foreach ($itr as $file) {
+        foreach ($itr as $filepath => $file) {
             $file_modified = $file->getMTime();
             if ($file_modified > $last_modified) {
                 $last_modified = $file_modified;
@@ -68,6 +60,43 @@ abstract class Folder
 
         return $last_modified;
     }
+
+    /**
+     * Get relative path between target and base path. If path isn't relative, return full path.
+     *
+     * @param  string  $path
+     * @param  string  $base
+     * @return string
+     */
+    public static function getRelativePath($path, $base = GRAV_ROOT)
+    {
+        if ($base) {
+            $base = preg_replace('![\\\/]+!', '/', $base);
+            $path = preg_replace('![\\\/]+!', '/', $path);
+            if (strpos($path, $base) === 0) {
+                $path = ltrim(substr($path, strlen($base)), '/');
+            }
+        }
+
+        return $path;
+    }
+
+    /**
+     * Shift first directory out of the path.
+     *
+     * @param string $path
+     * @return string
+     */
+    public static function shift(&$path)
+    {
+        $parts = explode('/', trim($path, '/'), 2);
+        $result = array_shift($parts);
+        $path = array_shift($parts);
+
+        return $result ?: null;
+    }
+
+
 
     /**
      * Return recursive list of all files and directories under given path.
@@ -208,13 +237,14 @@ abstract class Folder
     /**
      * Recursively delete directory from filesystem.
      *
-     * @param  string            $target
+     * @param  string $target
      * @throws \RuntimeException
+     * @return bool
      */
     public static function delete($target)
     {
         if (!is_dir($target)) {
-            throw new \RuntimeException('Cannot delete non-existing folder.');
+            return;
         }
 
         $success = self::doDelete($target);
@@ -249,6 +279,46 @@ abstract class Folder
     }
 
     /**
+     * Recursive copy of one directory to another
+     *
+     * @param $src
+     * @param $dest
+     *
+     * @return bool
+     */
+    public static function rcopy($src, $dest)
+    {
+
+        // If the src is not a directory do a simple file copy
+        if (!is_dir($src)) {
+            copy($src, $dest);
+            return true;
+        }
+
+        // If the destination directory does not exist create it
+        if (!is_dir($dest)) {
+            if (!mkdir($dest)) {
+                // If the destination directory could not be created stop processing
+                return false;
+            }
+        }
+
+        // Open the source directory to read in files
+        $i = new \DirectoryIterator($src);
+        /** @var \DirectoryIterator $f */
+        foreach ($i as $f) {
+            if ($f->isFile()) {
+                copy($f->getRealPath(), "$dest/" . $f->getFilename());
+            } else {
+                if (!$f->isDot() && $f->isDir()) {
+                    static::rcopy($f->getRealPath(), "$dest/$f");
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * @param  string $folder
      * @return bool
      * @internal
@@ -260,30 +330,24 @@ abstract class Folder
             return @unlink($folder);
         }
 
-        // Go through all items in filesystem and recursively remove everything.
-        $files = array_diff(scandir($folder), array('.', '..'));
-        foreach ($files as $file) {
-            $path = "{$folder}/{$file}";
-            (is_dir($path)) ? self::doDelete($path) : @unlink($path);
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($folder, \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        /** @var \DirectoryIterator $fileinfo */
+        foreach ($files as $fileinfo) {
+            if ($fileinfo->isDir()) {
+                if (false === rmdir($fileinfo->getRealPath())) {
+                    return false;
+                }
+            } else {
+                if (false === unlink($fileinfo->getRealPath())) {
+                    return false;
+                }
+            }
         }
 
-        return @rmdir($folder);
+        return rmdir($folder);
     }
-}
-
-class GravRecursiveFilterIterator extends \RecursiveFilterIterator
-{
-    public static $FILTERS = array(
-        '..', '.DS_Store'
-    );
-
-    public function accept()
-    {
-        return !in_array(
-            $this->current()->getFilename(),
-            self::$FILTERS,
-            true
-        );
-    }
-
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Grav\Common\Data;
 
+use Grav\Common\GravTrait;
 use RocketTheme\Toolbox\ArrayTraits\Export;
 
 /**
@@ -11,7 +12,7 @@ use RocketTheme\Toolbox\ArrayTraits\Export;
  */
 class Blueprint
 {
-    use Export;
+    use Export, DataMutatorTrait, GravTrait;
 
     public $name;
 
@@ -47,68 +48,6 @@ class Blueprint
     }
 
     /**
-     * Get value by using dot notation for nested arrays/objects.
-     *
-     * @example $value = $data->get('this.is.my.nested.variable');
-     *
-     * @param string  $name       Dot separated path to the requested value.
-     * @param mixed   $default    Default value (or null).
-     * @param string  $separator  Separator, defaults to '.'
-     *
-     * @return mixed  Value.
-     */
-    public function get($name, $default = null, $separator = '.')
-    {
-        $path = explode($separator, $name);
-        $current = $this->items;
-        foreach ($path as $field) {
-            if (is_object($current) && isset($current->{$field})) {
-                $current = $current->{$field};
-            } elseif (is_array($current) && isset($current[$field])) {
-                $current = $current[$field];
-            } else {
-                return $default;
-            }
-        }
-
-        return $current;
-    }
-
-    /**
-     * Sey value by using dot notation for nested arrays/objects.
-     *
-     * @example $value = $data->set('this.is.my.nested.variable', true);
-     *
-     * @param string  $name       Dot separated path to the requested value.
-     * @param mixed   $value      New value.
-     * @param string  $separator  Separator, defaults to '.'
-     */
-    public function set($name, $value, $separator = '.')
-    {
-        $path = explode($separator, $name);
-        $current = &$this->items;
-        foreach ($path as $field) {
-            if (is_object($current)) {
-                // Handle objects.
-                if (!isset($current->{$field})) {
-                    $current->{$field} = array();
-                }
-                $current = &$current->{$field};
-            } else {
-                // Handle arrays and scalars.
-                if (!is_array($current)) {
-                    $current = array($field => array());
-                } elseif (!isset($current[$field])) {
-                    $current[$field] = array();
-                }
-                $current = &$current[$field];
-            }
-        }
-
-        $current = $value;
-    }
-
-    /**
      * Return all form fields.
      *
      * @return array
@@ -137,7 +76,7 @@ class Blueprint
         try {
             $this->validateArray($data, $this->nested);
         } catch (\RuntimeException $e) {
-            throw new \RuntimeException(sprintf('Page validation failed: %s', $e->getMessage()));
+            throw new \RuntimeException(sprintf('<b>Validation failed:</b> %s', $e->getMessage()));
         }
     }
 
@@ -146,10 +85,9 @@ class Blueprint
      *
      * @param  array $data1
      * @param  array $data2
-     * @param  string $name
      * @return array
      */
-    public function mergeData(array $data1, array $data2, $name = null)
+    public function mergeData(array $data1, array $data2)
     {
         // Initialize data
         $this->fields();
@@ -180,7 +118,17 @@ class Blueprint
     {
         // Initialize data
         $this->fields();
-        return $this->extraArray($data, $this->nested, $prefix);
+        $rules = $this->nested;
+
+        // Drill down to prefix level
+        if (!empty($prefix)) {
+            $parts = explode('.', trim($prefix, '.'));
+            foreach ($parts as $part) {
+                $rules = isset($rules[$part]) ? $rules[$part] : [];
+            }
+        }
+
+        return $this->extraArray($data, $rules, $prefix);
     }
 
     /**
@@ -213,7 +161,7 @@ class Blueprint
                     $bref = array_merge($bref, array($key => $head[$key]));
                 }
             }
-        } while(count($head_stack));
+        } while (count($head_stack));
 
         $this->items = $blueprints;
     }
@@ -290,6 +238,9 @@ class Blueprint
 
             if ($rule) {
                 // Item has been defined in blueprints.
+                if (is_array($field) && count($field) == 1 && reset($field) == '') {
+                    continue;
+                }
                 $field = Validation::filter($field, $rule);
             } elseif (is_array($field) && is_array($val)) {
                 // Array has been defined in blueprints.
@@ -349,7 +300,7 @@ class Blueprint
                 // Item has been defined in blueprints.
             } elseif (is_array($field) && is_array($val)) {
                 // Array has been defined in blueprints.
-                $array += $this->ExtraArray($field, $val, $prefix);
+                $array += $this->ExtraArray($field, $val, $prefix . $key . '.');
             } else {
                 // Undefined/extra item.
                 $array[$prefix.$key] = $field;
@@ -376,11 +327,11 @@ class Blueprint
             $field['name'] = $prefix . $key;
             $field += $params;
 
-            if (isset($field['fields'])) {
+            if (isset($field['fields']) && (!isset($field['type']) || $field['type'] !== 'list')) {
                 // Recursively get all the nested fields.
                 $newParams = array_intersect_key($this->filter, $field);
                 $this->parseFormFields($field['fields'], $newParams, $prefix, $current[$key]['fields']);
-            } else {
+            } else if ($field['type'] !== 'ignore') {
                 // Add rule.
                 $this->rules[$prefix . $key] = &$field;
                 $this->addProperty($prefix . $key);
@@ -425,10 +376,20 @@ class Blueprint
                             }
                         }
                     }
+
+                    elseif (substr($name, 0, 8) == '@config-') {
+                        $property = substr($name, 8);
+                        $default = isset($field[$property]) ? $field[$property] : null;
+                        $config = self::getGrav()['config']->get($value, $default);
+
+                        if (!is_null($config)) {
+                            $field[$property] = $config;
+                        }
+                    }
                 }
 
                 // Initialize predefined validation rule.
-                if (isset($field['validate']['rule'])) {
+                if (isset($field['validate']['rule']) && $field['type'] !== 'ignore') {
                     $field['validate'] += $this->getRule($field['validate']['rule']);
                 }
             }
@@ -478,14 +439,15 @@ class Blueprint
      * @throws \RuntimeException
      * @internal
      */
-    protected function checkRequired(array $data, array $fields) {
+    protected function checkRequired(array $data, array $fields)
+    {
         foreach ($fields as $name => $field) {
             if (!is_string($field)) {
                 continue;
             }
             $field = $this->rules[$field];
             if (isset($field['validate']['required'])
-                && $field['validate']['required'] == true
+                && $field['validate']['required'] === true
                 && empty($data[$name])) {
                 throw new \RuntimeException("Missing required field: {$field['name']}");
             }

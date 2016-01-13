@@ -1,7 +1,9 @@
 <?php
 namespace Grav\Common\GPM;
 
+use Grav\Common\Inflector;
 use Grav\Common\Iterator;
+use Grav\Common\Utils;
 
 class GPM extends Iterator
 {
@@ -28,6 +30,8 @@ class GPM extends Iterator
      */
     protected $cache;
 
+    protected $install_paths = ['plugins' => 'user/plugins/%name%', 'themes' => 'user/themes/%name%', 'skeletons' => 'user/'];
+
     /**
      * Creates a new GPM instance with Local and Remote packages available
      * @param boolean  $refresh  Applies to Remote Packages only and forces a refetch of data
@@ -36,8 +40,11 @@ class GPM extends Iterator
     public function __construct($refresh = false, $callback = null)
     {
         $this->installed  = new Local\Packages();
-        $this->repository = new Remote\Packages($refresh, $callback);
-        $this->grav       = new Remote\Grav($refresh, $callback);
+        try {
+            $this->repository = new Remote\Packages($refresh, $callback);
+            $this->grav       = new Remote\Grav($refresh, $callback);
+        } catch (\Exception $e) {
+        }
     }
 
     /**
@@ -345,9 +352,23 @@ class GPM extends Iterator
     public function findPackages($searches = [])
     {
         $packages = ['total' => 0, 'not_found' => []];
+        $inflector = new Inflector();
 
         foreach ($searches as $search) {
+            $repository = '';
+            // if this is an object, get the search data from the key
+            if (is_object($search)) {
+                $search = (array) $search;
+                $key = key($search);
+                $repository = $search[$key];
+                $search = $key;
+            }
+
             if ($found = $this->findPackage($search)) {
+                // set override repository if provided
+                if ($repository) {
+                    $found->override_repository = $repository;
+                }
                 if (!isset($packages[$found->package_type])) {
                     $packages[$found->package_type] = [];
                 }
@@ -355,7 +376,20 @@ class GPM extends Iterator
                 $packages[$found->package_type][$found->slug] = $found;
                 $packages['total']++;
             } else {
-                $packages['not_found'][] = $search;
+                // make a best guess at the type based on the repo URL
+                if (Utils::contains($repository, '-theme')) {
+                    $type = 'themes';
+                } else {
+                    $type = 'plugins';
+                }
+
+                $not_found = new \stdClass();
+                $not_found->name = $inflector->camelize($search);
+                $not_found->slug = $search;
+                $not_found->package_type = $type;
+                $not_found->install_path = str_replace('%name%', $search, $this->install_paths[$type]);
+                $not_found->override_repository = $repository;
+                $packages['not_found'][$search] = $not_found;
             }
         }
 

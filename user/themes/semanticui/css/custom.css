@@ -1,0 +1,109 @@
+header h1.ui.large.attached.header {
+    font-size: 2rem;
+}
+
+header div.ui.attached.segment {
+    padding: 0;
+}
+
+header .ui.menu, header .ui.menu > .item:first-child {
+    border-radius: 0;
+}
+
+header .ui.menu .ui.dropdown.item {
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+
+html {
+    font-size: 100% !important;
+}
+
+p {
+    font-size: 1rem;
+}
+
+.ui.testimonial {
+    background: #f9f9f9;
+    border-left: 10px solid #ccc;
+    margin: 1.5em 10px;
+    padding: 0.5em 10px;
+    quotes: "\201C""\201D""\2018""\2019";
+}
+
+.ui.testimonial:before {
+    color: #ccc;
+    content: open-quote;
+    font-size: 4em;
+    line-height: 0.1em;
+    margin-right: 0.25em;
+    vertical-align: -0.4em;
+}
+
+.ui.testimonial p {
+    display: inline;
+}
+
+.id-blog_md .twelve.wide.column .ui.segment:first-child {
+  margin-top: 0;
+}
+
+#body {
+  margin-top: 1rem;
+}
+
+.ui.my.label, .ui.my.button {
+    padding: 0.4rem;
+    margin: 0.1rem;
+}
+
+.ui.my.labeled.icon.button {
+    padding: 0.58571em 0.5em 0.58571em 3.07142em !important;
+}
+
+iframe.instagram-media {
+    margin-bottom: 20px !important;
+}
+
+
+.id_blog_md section#body .ui.segment:first-child {
+  margin-top: 0;
+}
+
+body,.ui.header, .ui.menu {
+    font-family: "Dosis","Lato",​​Arial,​Helvetica,​sans-serif !important;
+}
+
+.content .description p {
+    text-align: justify;
+    hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+}
+
+code {
+    font-family: "Source Code Pro",monospace;
+}
+
+.logo.item img {
+    padding-right: 1rem;
+}
+
+.videoWrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    padding-top: 25px;
+    height: 0;
+}
+.videoWrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.fb-post, .fb-post iframe[style], .fb-post span {
+    width: 100% !important;
+}

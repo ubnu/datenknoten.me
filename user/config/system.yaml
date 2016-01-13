@@ -4,7 +4,7 @@ home:
   alias: '/home'
 
 pages:
-  theme: antimatter-enko
+  theme: semanticui
   markdown_extra: false
   process:
     markdown: true
@@ -25,10 +25,10 @@ twig:
 
 assets:
   css_pipeline: false
-  css_minify: true
-  css_rewrite: true
+  css_minify: false
+  css_rewrite: false
   js_pipeline: false
-  js_minify: true
+  js_minify: false
 
 errors:
   display: true
@@ -39,3 +39,4 @@ debugger:
   twig: true
   shutdown:
     close_connection: true
+

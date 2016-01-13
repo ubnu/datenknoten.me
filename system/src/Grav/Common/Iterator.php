@@ -49,7 +49,6 @@ class Iterator implements \ArrayAccess, \Iterator, \Countable, \Serializable
      * Convents iterator to a comma separated list.
      *
      * @return string
-     * @todo Add support to nested sets.
      */
     public function __toString()
     {
@@ -84,8 +83,41 @@ class Iterator implements \ArrayAccess, \Iterator, \Countable, \Serializable
      */
     public function nth($key)
     {
-        $items = array_values($this->items);
+        $items = array_keys($this->items);
         return (isset($items[$key])) ? $this->offsetGet($items[$key]) : false;
+    }
+
+    /**
+     * Get the first item
+     *
+     * @return mixed
+     */
+    public function first()
+    {
+        $items = array_keys($this->items);
+        return $this->offsetGet(array_shift($items));
+    }
+
+    /**
+     * Get the last item
+     *
+     * @return mixed
+     */
+    public function last()
+    {
+        $items = array_keys($this->items);
+        return $this->offsetGet(array_pop($items));
+    }
+
+    /**
+     * Reverse the Iterator
+     *
+     * @return $this
+     */
+    public function reverse()
+    {
+        $this->items = array_reverse($this->items);
+        return $this;
     }
 
     /**
@@ -161,6 +193,25 @@ class Iterator implements \ArrayAccess, \Iterator, \Countable, \Serializable
             $items = $items->toArray();
         }
         $this->items = array_merge($this->items, (array) $items);
+
+        return $this;
+    }
+
+    /**
+     * Filter elements from the list
+     * @param  callable|null $callback A function the receives ($value, $key) and must return a boolean to indicate filter status
+     * @return $this
+     */
+    public function filter(callable $callback = null)
+    {
+        foreach ($this->items as $key => $value) {
+            if (
+                ($callback && !call_user_func($callback, $value, $key)) ||
+                (!$callback && !(bool) $value)
+            ) {
+                unset($this->items[$key]);
+            }
+        }
 
         return $this;
     }

@@ -1,15 +1,17 @@
 <?php
 namespace Grav\Common;
 
+use Grav\Common\Language\Language;
+use Grav\Common\Page\Medium\ImageMedium;
 use Grav\Common\Page\Pages;
 use Grav\Common\Service\ConfigServiceProvider;
 use Grav\Common\Service\ErrorServiceProvider;
 use Grav\Common\Service\LoggerServiceProvider;
 use Grav\Common\Service\StreamsServiceProvider;
+use Grav\Common\Twig\Twig;
 use RocketTheme\Toolbox\DI\Container;
 use RocketTheme\Toolbox\Event\Event;
 use RocketTheme\Toolbox\Event\EventDispatcher;
-use Grav\Common\Page\Medium;
 
 /**
  * Grav
@@ -55,6 +57,8 @@ class Grav extends Container
 
         $container['grav'] = $container;
 
+
+
         $container['debugger'] = new Debugger();
         $container['debugger']->startTimer('_init', 'Initialize');
 
@@ -76,8 +80,11 @@ class Grav extends Container
         $container['cache'] = function ($c) {
             return new Cache($c);
         };
+        $container['session'] = function ($c) {
+            return new Session($c);
+        };
         $container['plugins'] = function ($c) {
-            return new Plugins($c);
+            return new Plugins();
         };
         $container['themes'] = function ($c) {
             return new Themes($c);
@@ -88,41 +95,52 @@ class Grav extends Container
         $container['taxonomy'] = function ($c) {
             return new Taxonomy($c);
         };
+        $container['language'] = function ($c) {
+            return new Language($c);
+        };
+
         $container['pages'] = function ($c) {
             return new Page\Pages($c);
         };
-        $container['assets'] = function ($c) {
-            return new Assets();
-        };
+
+        $container['assets'] = new Assets();
+
         $container['page'] = function ($c) {
             /** @var Pages $pages */
             $pages = $c['pages'];
-            $page = $pages->dispatch($c['uri']->route());
+            /** @var Language $language */
+            $language = $c['language'];
 
-            if (!$page || !$page->routable()) {
+            /** @var Uri $uri */
+            $uri = $c['uri'];
 
-                // special  case where a media file is requested
-                if (!$page) {
-                    $path_parts = pathinfo($c['uri']->route());
-                    $page = $c['pages']->dispatch($path_parts['dirname']);
-                    if ($page) {
-                        $media = $page->media()->all();
-                        $media_file = urldecode($path_parts['basename']);
-                        if (isset($media[$media_file])) {
-                            $medium = $media[$media_file];
+            $path = rtrim($uri->path(), '/');
+            $path = $path ?: '/';
 
-                            // loop through actions for the image and call them
-                            foreach ($c['uri']->query(null, true) as $action => $params) {
-                                if (in_array($action, Medium::$valid_actions)) {
-                                    call_user_func_array(array(&$medium, $action), explode(',', $params));
-                                }
-                            }
-                            header('Content-type: '. $mime = $medium->get('mime'));
-                            echo file_get_contents($medium->path());
-                            die;
-                        }
+            $page = $pages->dispatch($path);
+
+            // Redirection tests
+            if ($page) {
+                // Language-specific redirection scenarios
+                if ($language->enabled()) {
+                    if ($language->isLanguageInUrl() && !$language->isIncludeDefaultLanguage()) {
+                        $c->redirect($page->route());
+                    }
+                    if (!$language->isLanguageInUrl() && $language->isIncludeDefaultLanguage()) {
+                        $c->redirectLangSafe($page->route());
                     }
                 }
+                // Default route test and redirect
+                if ($c['config']->get('system.pages.redirect_default_route') && $page->route() != $path) {
+                    $c->redirectLangSafe($page->route());
+                }
+            }
+
+            // if page is not found, try some fallback stuff
+            if (!$page || !$page->routable()) {
+
+                // Try fallback URL stuff...
+                $c->fallbackUrl($page, $path);
 
                 // If no page found, fire event
                 $event = $c->fireEvent('onPageNotFound');
@@ -155,6 +173,8 @@ class Grav extends Container
         $container->register(new StreamsServiceProvider);
         $container->register(new ConfigServiceProvider);
 
+        $container['inflector'] = new Inflector();
+
         $container['debugger']->stopTimer('_init');
 
         return $container;
@@ -162,19 +182,39 @@ class Grav extends Container
 
     public function process()
     {
-        // Use output buffering to prevent headers from being sent too early.
-        ob_start();
-
         /** @var Debugger $debugger */
         $debugger = $this['debugger'];
+
+
 
         // Initialize configuration.
         $debugger->startTimer('_config', 'Configuration');
         $this['config']->init();
         $this['errors']->resetHandlers();
+        $this['uri']->init();
+        $this['session']->init();
+
         $debugger->init();
         $this['config']->debug();
         $debugger->stopTimer('_config');
+
+        // Use output buffering to prevent headers from being sent too early.
+        ob_start();
+        if ($this['config']->get('system.cache.gzip')) {
+            ob_start('ob_gzhandler');
+        }
+
+        // Initialize the timezone
+        if ($this['config']->get('system.timezone')) {
+            date_default_timezone_set($this['config']->get('system.timezone'));
+        }
+
+        // Initialize Locale if set and configured
+        if ($this['language']->enabled() && $this['config']->get('system.languages.override_locale')) {
+            setlocale(LC_ALL, $this['language']->getLanguage());
+        } elseif ($this['config']->get('system.default_locale')) {
+            setlocale(LC_ALL, $this['config']->get('system.default_locale'));
+        }
 
         $debugger->startTimer('streams', 'Streams');
         $this['streams'];
@@ -206,7 +246,6 @@ class Grav extends Container
         $this['pages']->init();
         $this->fireEvent('onPagesInitialized');
         $debugger->stopTimer('pages');
-
         $this->fireEvent('onPageInitialized');
 
         $debugger->addAssets();
@@ -233,17 +272,53 @@ class Grav extends Container
      * @param string $route Internal route.
      * @param int $code Redirection code (30x)
      */
-    public function redirect($route, $code = 303)
+    public function redirect($route, $code = null)
     {
         /** @var Uri $uri */
         $uri = $this['uri'];
+
+        //Check for code in route
+        $regex = '/.*(\[(30[1-7])\])$/';
+        preg_match($regex, $route, $matches);
+        if ($matches) {
+            $route = str_replace($matches[1], '', $matches[0]);
+            $code = $matches[2];
+        }
+
+        if ($code == null) {
+            $code = $this['config']->get('system.pages.redirect_default_code', 301);
+        }
 
         if (isset($this['session'])) {
             $this['session']->close();
         }
 
-        header("Location: " . rtrim($uri->rootUrl(), '/') .'/'. trim($route, '/'), true, $code);
+        if ($uri->isExternal($route)) {
+            $url = $route;
+        } else {
+            $url = rtrim($uri->rootUrl(), '/') .'/'. trim($route, '/');
+        }
+
+        header("Location: {$url}", true, $code);
         exit();
+    }
+
+    /**
+     * Redirect browser to another location taking language into account (preferred)
+     *
+     * @param string $route Internal route.
+     * @param int $code Redirection code (30x)
+     */
+    public function redirectLangSafe($route, $code = null)
+    {
+        /** @var Language $language */
+        $language = $this['language'];
+
+        if (!$this['uri']->isExternal($route) && $language->enabled() && $language->isIncludeDefaultLanguage()) {
+            return $this->redirect($language->getLanguage() . $route, $code);
+        } else {
+            return $this->redirect($route, $code);
+        }
     }
 
     /**
@@ -275,12 +350,45 @@ class Grav extends Container
     public function header()
     {
         $extension = $this['uri']->extension();
+
+        /** @var Page $page */
+        $page = $this['page'];
+
         header('Content-type: ' . $this->mime($extension));
 
+        // Calculate Expires Headers if set to > 0
+        $expires = $page->expires();
+
+        if ($expires > 0) {
+            $expires_date = gmdate('D, d M Y H:i:s', time() + $expires) . ' GMT';
+            header('Cache-Control: max-age=' . $expires);
+            header('Expires: '. $expires_date);
+        }
+
+        // Set the last modified time
+        if ($page->lastModified()) {
+            $last_modified_date = gmdate('D, d M Y H:i:s', $page->modified()) . ' GMT';
+            header('Last-Modified: ' . $last_modified_date);
+        }
+
+        // Calculate a Hash based on the raw file
+        if ($page->eTag()) {
+            header('ETag: ' . md5($page->raw() . $page->modified()));
+        }
+
         // Set debugger data in headers
-        if (!($extension == null || $extension == 'html')) {
+        if (!($extension === null || $extension == 'html')) {
             $this['debugger']->enabled(false);
-            // $this['debugger']->sendDataInHeaders();
+        }
+
+        // Set HTTP response code
+        if (isset($this['page']->header()->http_response_code)) {
+            http_response_code($this['page']->header()->http_response_code);
+        }
+
+        // Vary: Accept-Encoding
+        if ($this['config']->get('system.pages.vary_accept_encoding', false)) {
+            header('Vary: Accept-Encoding');
         }
     }
 
@@ -305,21 +413,98 @@ class Grav extends Container
     public function shutdown()
     {
         if ($this['config']->get('system.debugger.shutdown.close_connection')) {
-            set_time_limit(0);
-            ignore_user_abort(true);
+            //stop user abort
+            if (function_exists('ignore_user_abort')) {
+                @ignore_user_abort(true);
+            }
 
+            // close the session
             if (isset($this['session'])) {
                 $this['session']->close();
             }
 
-            header('Content-length: ' . ob_get_length());
-            header("Connection: close\r\n");
+            // flush buffer if gzip buffer was started
+            if ($this['config']->get('system.cache.gzip')) {
+                ob_end_flush(); // gzhandler buffer
+            }
 
+            // get lengh and close the connection
+            header('Content-Length: ' . ob_get_length());
+            header("Connection: close");
+
+            // flush the regular buffer
             ob_end_flush();
-            ob_flush();
+            @ob_flush();
             flush();
+
+            // fix for fastcgi close connection issue
+            if (function_exists('fastcgi_finish_request')) {
+                @fastcgi_finish_request();
+            }
+
         }
 
         $this->fireEvent('onShutdown');
+    }
+
+    /**
+     * This attempts to find media, other files, and download them
+     * @param $page
+     * @param $path
+     */
+    protected function fallbackUrl($page, $path)
+    {
+        /** @var Uri $uri */
+        $uri = $this['uri'];
+
+        /** @var Config $config */
+        $config = $this['config'];
+
+        $uri_extension = $uri->extension();
+
+        // Only allow whitelisted types to fallback
+        if (!in_array($uri_extension, $config->get('system.pages.fallback_types'))) {
+            return;
+        }
+
+        $path_parts = pathinfo($path);
+        $page = $this['pages']->dispatch($path_parts['dirname'], true);
+        if ($page) {
+            $media = $page->media()->all();
+
+            $parsed_url = parse_url(urldecode($uri->basename()));
+
+            $media_file = $parsed_url['path'];
+
+            // if this is a media object, try actions first
+            if (isset($media[$media_file])) {
+                $medium = $media[$media_file];
+                foreach ($uri->query(null, true) as $action => $params) {
+                    if (in_array($action, ImageMedium::$magic_actions)) {
+                        call_user_func_array(array(&$medium, $action), explode(',', $params));
+                    }
+                }
+                Utils::download($medium->path(), false);
+            }
+
+            // unsupported media type, try to download it...
+            if ($uri_extension) {
+                $extension = $uri_extension;
+            } else {
+                if (isset($path_parts['extension'])) {
+                    $extension = $path_parts['extension'];
+                } else {
+                    $extension = null;
+                }
+            }
+
+            if ($extension) {
+                $download = true;
+                if (in_array(ltrim($extension, '.'), $config->get('system.media.unsupported_inline_types', []))) {
+                    $download = false;
+                }
+                Utils::download($page->path() . DIRECTORY_SEPARATOR . $uri->basename(), $download);
+            }
+        }
     }
 }

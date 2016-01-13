@@ -1,0 +1,66 @@
+{% set embed = embed|default(false) %}
+{% set tweet = tweet|default(false) %}
+<div class="ui segments">
+    {% if not tweet %}
+        <div class="ui top attached segment">
+            <h2 class="ui header"><a href="{{ page.url }}">{{ page.title }}</a></h2>
+        </div>
+    {% endif %}
+    <div class="ui blue segment">
+        <div class="content">
+            <div class="description">
+                {{ page.content }}
+            </div>
+        </div>
+    </div>
+    <div class="ui blue {% if embed %}bottom {% endif %}attached segment">
+        <div class="meta">
+            <a class="ui mini compact labeled icon button" href="{{ page.url }}">
+                <i class="calendar icon"></i>
+                {{ page.date|date("Y-m-d") }}
+            </a>
+            {% if page.taxonomy.tag %}
+                {% for tag in page.taxonomy.tag %}
+                    <a class="ui mini compact labeled icon button"
+                       href="{{ base_url }}/tag{{ config.system.param_sep }}{{ tag }}">
+                        <i class="tag icon"></i>
+                        {{ tag }}
+                    </a>
+                {% endfor %}
+            {% endif %}
+            {% if tweet %}
+                <div class="ui mini compact labeled icon button">
+                    <i class="twitter icon"></i>
+                    #tweet
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    {% if not embed %}
+        <div class="ui bottom attached segment">
+            <div id="disqus_thread"></div>
+            <script>
+                /**
+                 *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+                 *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+                 */
+
+                var disqus_config = function () {
+                    this.page.url = 'https://datenknoten.me{{ page.url }}';  // Replace PAGE_URL with your page's canonical URL variable
+                    this.page.identifier = '{{ page.path }}'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+                };
+
+                (function () {  // DON'T EDIT BELOW THIS LINE
+                    var d = document, s = d.createElement('script');
+
+                    s.src = '//datenknoten.disqus.com/embed.js';
+
+                    s.setAttribute('data-timestamp', +new Date());
+                    (d.head || d.body).appendChild(s);
+                })();
+            </script>
+            <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments
+                    powered by Disqus.</a></noscript>
+        </div>
+    {% endif %}
+</div>

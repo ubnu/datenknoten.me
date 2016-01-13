@@ -4,15 +4,22 @@ namespace Grav\Common\User;
 use Grav\Common\Data\Blueprints;
 use Grav\Common\Data\Data;
 use Grav\Common\File\CompiledYamlFile;
+use Grav\Common\GravTrait;
+use Grav\Common\Utils;
 
 /**
  * User object
  *
+ * @property mixed authenticated
+ * @property mixed password
+ * @property bool|string hashed_password
  * @author RocketTheme
  * @license MIT
  */
 class User extends Data
 {
+    use GravTrait;
+
     /**
      * Load user account.
      *
@@ -23,10 +30,12 @@ class User extends Data
      */
     public static function load($username)
     {
-        // FIXME: validate directory name
-        $blueprints = new Blueprints('blueprints://user');
-        $blueprint = $blueprints->get('account');
-        $file = CompiledYamlFile::instance(ACCOUNTS_DIR . $username . YAML_EXT);
+        $locator = self::getGrav()['locator'];
+
+        $blueprints = new Blueprints('blueprints://');
+        $blueprint = $blueprints->get('user/account');
+        $file_path = $locator->findResource('account://' . $username . YAML_EXT);
+        $file = CompiledYamlFile::instance($file_path);
         $content = $file->content();
         if (!isset($content['username'])) {
             $content['username'] = $username;
@@ -35,6 +44,22 @@ class User extends Data
         $user->file($file);
 
         return $user;
+    }
+
+    /**
+     * Remove user account.
+     *
+     * @param string $username
+     * @return bool True is the action was performed
+     */
+    public static function remove($username)
+    {
+        $file_path = self::getGrav()['locator']->findResource('account://' . $username . YAML_EXT);
+        if (file_exists($file_path) && unlink($file_path)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -47,11 +72,35 @@ class User extends Data
      */
     public function authenticate($password)
     {
-        $result = Authentication::verify($password, $this->password);
+        $save = false;
+
+        // Plain-text is still stored
+        if ($this->password) {
+            if ($password !== $this->password) {
+                // Plain-text passwords do not match, we know we should fail but execute
+                // verify to protect us from timing attacks and return false regardless of
+                // the result
+                Authentication::verify($password, self::getGrav()['config']->get('system.security.default_hash'));
+                return false;
+            } else {
+                // Plain-text does match, we can update the hash and proceed
+                $save = true;
+
+                $this->hashed_password = Authentication::create($this->password);
+                unset($this->password);
+            }
+
+        }
+
+        $result = Authentication::verify($password, $this->hashed_password);
 
         // Password needs to be updated, save the file.
         if ($result == 2) {
-            $this->password = Authentication::create($password);
+            $save = true;
+            $this->hashed_password = Authentication::create($password);
+        }
+
+        if ($save) {
             $this->save();
         }
 
@@ -59,13 +108,50 @@ class User extends Data
     }
 
     /**
-     * Checks user authorisation to the action.
+     * Save user without the username
+     */
+    public function save()
+    {
+        $file = $this->file();
+        if ($file) {
+            // if plain text password, hash it and remove plain text
+            if ($this->password) {
+                $this->hashed_password = Authentication::create($this->password);
+                unset($this->password);
+            }
+
+            $username = $this->get('username');
+            unset($this->username);
+            $file->save($this->items);
+            $this->set('username', $username);
+        }
+    }
+
+    /**
+     * Checks user authorization to the action.
      *
      * @param  string  $action
      * @return bool
      */
+    public function authorize($action)
+    {
+        if (empty($this->items)) {
+            return false;
+        }
+
+        return Utils::isPositive($this->get("access.{$action}"));
+    }
+
+    /**
+     * Checks user authorization to the action.
+     * Ensures backwards compatibility
+     *
+     * @param  string $action
+     * @deprecated use authorize()
+     * @return bool
+     */
     public function authorise($action)
     {
-        return $this->get("access.{$action}") === true;
+        return $this->authorize($action);
     }
 }

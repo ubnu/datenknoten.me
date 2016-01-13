@@ -3,6 +3,7 @@ namespace Grav\Common\Page;
 
 use Grav\Common\Grav;
 use Grav\Common\Iterator;
+use Grav\Common\Utils;
 
 /**
  * Collection of Pages.
@@ -22,7 +23,8 @@ class Collection extends Iterator
      */
     protected $params;
 
-    public function __construct($items = array(), array $params = array(), Pages $pages = null) {
+    public function __construct($items = array(), array $params = array(), Pages $pages = null)
+    {
         parent::__construct($items);
 
         $this->params = $params;
@@ -32,6 +34,29 @@ class Collection extends Iterator
     public function params()
     {
         return $this->params;
+    }
+
+    /**
+     * Add a single page to a collection
+     *
+     * @param Page $page
+     * @return $this
+     */
+    public function addPage(Page $page)
+    {
+        $this->items[$page->path()] = ['slug' => $page->slug()];
+        return $this;
+    }
+
+    /**
+     *
+     * Create a copy of this collection
+     *
+     * @return static
+     */
+    public function copy()
+    {
+        return new static($this->items, $this->params, $this->pages);
     }
 
     /**
@@ -83,6 +108,7 @@ class Collection extends Iterator
      * Remove item from the list.
      *
      * @param Page|string|null $key
+     * @return $this|void
      * @throws \InvalidArgumentException
      */
     public function remove($key = null)
@@ -97,6 +123,7 @@ class Collection extends Iterator
         }
 
         parent::remove($key);
+        return $this;
     }
 
     /**
@@ -175,12 +202,16 @@ class Collection extends Iterator
      */
     public function adjacentSibling($path, $direction = 1)
     {
-
         $values = array_keys($this->items);
         $keys = array_flip($values);
-        $index = $keys[$path] - $direction;
 
-        return isset($values[$index]) ? $this->offsetGet($values[$index]) : $this;
+        if (array_key_exists($path, $keys)) {
+            $index = $keys[$path] - $direction;
+
+            return isset($values[$index]) ? $this->offsetGet($values[$index]) : $this;
+        }
+        return $this;
+
     }
 
     /**
@@ -189,8 +220,43 @@ class Collection extends Iterator
      * @param  string  $path  the path the item
      * @return Page    Item in the array the the current position.
      */
-    public function currentPosition($path) {
+    public function currentPosition($path)
+    {
         return array_search($path, array_keys($this->items));
+    }
+
+    /**
+     * Returns the items between a set of date ranges of either the page date field (default) or
+     * an arbitrary datetime page field where end date is optional
+     * Dates can be passed in as text that strtotime() can process
+     * http://php.net/manual/en/function.strtotime.php
+     *
+     * @param      $startDate
+     * @param bool $endDate
+     * @param      $field
+     *
+     * @return $this
+     * @throws \Exception
+     */
+    public function dateRange($startDate, $endDate = false, $field = false)
+    {
+        $start = Utils::date2timestamp($startDate);
+        $end = $endDate ? Utils::date2timestamp($endDate) : strtotime("now +1000 years");
+
+        $date_range = [];
+
+        foreach ($this->items as $path => $slug) {
+            $page = $this->pages->get($path);
+            if ($page !== null) {
+                $date = $field ? strtotime($page->value($field)) : $page->date();
+
+                if ($date > $start && $date < $end) {
+                    $date_range[$path] = $slug;
+                }
+            }
+        }
+        $this->items = $date_range;
+        return $this;
     }
 
     /**
@@ -204,11 +270,107 @@ class Collection extends Iterator
 
         foreach ($this->items as $path => $slug) {
             $page = $this->pages->get($path);
-            if ($page->visible()) {
-               $visible[$path] = $slug;
+            if ($page !== null && $page->visible()) {
+                $visible[$path] = $slug;
             }
         }
-        return new static($visible, $this->params, $this->pages);
+        $this->items = $visible;
+        return $this;
+    }
+
+    /**
+     * Creates new collection with only non-visible pages
+     *
+     * @return Collection The collection with only non-visible pages
+     */
+    public function nonVisible()
+    {
+        $visible = [];
+
+        foreach ($this->items as $path => $slug) {
+            $page = $this->pages->get($path);
+            if ($page !== null && !$page->visible()) {
+                $visible[$path] = $slug;
+            }
+        }
+        $this->items = $visible;
+        return $this;
+    }
+
+    /**
+     * Creates new collection with only modular pages
+     *
+     * @return Collection The collection with only modular pages
+     */
+    public function modular()
+    {
+        $modular = [];
+
+        foreach ($this->items as $path => $slug) {
+            $page = $this->pages->get($path);
+            if ($page !== null && $page->modular()) {
+                $modular[$path] = $slug;
+            }
+        }
+        $this->items = $modular;
+        return $this;
+    }
+
+    /**
+     * Creates new collection with only non-modular pages
+     *
+     * @return Collection The collection with only non-modular pages
+     */
+    public function nonModular()
+    {
+        $modular = [];
+
+        foreach ($this->items as $path => $slug) {
+            $page = $this->pages->get($path);
+            if ($page !== null && !$page->modular()) {
+                $modular[$path] = $slug;
+            }
+        }
+        $this->items = $modular;
+        return $this;
+    }
+
+    /**
+     * Creates new collection with only published pages
+     *
+     * @return Collection The collection with only published pages
+     */
+    public function published()
+    {
+        $published = [];
+
+        foreach ($this->items as $path => $slug) {
+            $page = $this->pages->get($path);
+            if ($page !== null && $page->published()) {
+                $published[$path] = $slug;
+            }
+        }
+        $this->items = $published;
+        return $this;
+    }
+
+    /**
+     * Creates new collection with only non-published pages
+     *
+     * @return Collection The collection with only non-published pages
+     */
+    public function nonPublished()
+    {
+        $published = [];
+
+        foreach ($this->items as $path => $slug) {
+            $page = $this->pages->get($path);
+            if ($page !== null && !$page->published()) {
+                $published[$path] = $slug;
+            }
+        }
+        $this->items = $published;
+        return $this;
     }
 
     /**
@@ -220,12 +382,77 @@ class Collection extends Iterator
     {
         $routable = [];
 
-        foreach (array_keys($this->items) as $path => $slug) {
+        foreach ($this->items as $path => $slug) {
             $page = $this->pages->get($path);
-            if ($page->routable()) {
+
+            if ($page !== null && $page->routable()) {
                 $routable[$path] = $slug;
             }
         }
-        return new static($routable, $this->params, $this->pages);
+
+        $this->items = $routable;
+        return $this;
     }
+
+    /**
+     * Creates new collection with only non-routable pages
+     *
+     * @return Collection The collection with only non-routable pages
+     */
+    public function nonRoutable()
+    {
+        $routable = [];
+
+        foreach ($this->items as $path => $slug) {
+            $page = $this->pages->get($path);
+            if ($page !== null && !$page->routable()) {
+                $routable[$path] = $slug;
+            }
+        }
+        $this->items = $routable;
+        return $this;
+    }
+
+    /**
+     * Creates new collection with only pages of the specified type
+     *
+     * @return Collection The collection
+     */
+    public function ofType($type)
+    {
+        $items = [];
+
+        foreach ($this->items as $path => $slug) {
+            $page = $this->pages->get($path);
+            if ($page !== null && $page->template() == $type) {
+                $items[$path] = $slug;
+            }
+        }
+
+        $this->items = $items;
+        return $this;
+    }
+
+    /**
+     * Creates new collection with only pages of one of the specified types
+     *
+     * @return Collection The collection
+     */
+    public function ofOneOfTheseTypes($types)
+    {
+        $items = [];
+
+        foreach ($this->items as $path => $slug) {
+            $page = $this->pages->get($path);
+            if ($page !== null && in_array($page->template(), $types)) {
+                $items[$path] = $slug;
+            }
+        }
+
+        $this->items = $items;
+        return $this;
+    }
+
+
+
 }

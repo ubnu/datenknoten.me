@@ -1,0 +1,29 @@
+{% if pagination|length > 1 %}
+    <div class="ui segment">
+        <div class="ui borderless pagination ten item fluid menu">
+            {% if pagination.hasPrev %}
+                <a class="item" href="{{ base_url }}{{ pagination.params }}{{ pagination.prevUrl }}">&laquo;</a>
+            {% else %}
+                <a class="item">&laquo;</a>
+            {% endif %}
+
+            {% for paginate in pagination %}
+
+                {% if paginate.isCurrent %}
+                    <a class="active item">{{ paginate.number }}</a>
+                {% elseif paginate.isInDelta %}
+                    <a class="item"
+                       href="{{ base_url }}{{ pagination.params }}{{ paginate.url }}">{{ paginate.number }}</a>
+                {% elseif paginate.isDeltaBorder %}
+                    <a class="item">&hellip;</a>
+                {% endif %}
+
+            {% endfor %}
+            {% if pagination.hasNext %}
+                <a class="item" href="{{ base_url }}{{ pagination.params }}{{ pagination.nextUrl }}">&raquo;</a>
+            {% else %}
+                <a class="item">&raquo;</a>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

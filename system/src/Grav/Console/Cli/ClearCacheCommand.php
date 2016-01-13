@@ -1,14 +1,13 @@
 <?php
 namespace Grav\Console\Cli;
 
-use Grav\Common\Filesystem\Folder;
+use Grav\Common\Cache;
+use Grav\Console\ConsoleTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class ClearCacheCommand
@@ -16,33 +15,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 class ClearCacheCommand extends Command
 {
-
-    protected $standard_remove = [
-        'cache/twig/',
-        'cache/doctrine/',
-        'cache/compiled/',
-        'cache/validated-',
-        'images/',
-        'assets/',
-    ];
-
-    protected $all_remove = [
-        'cache/',
-        'images/',
-        'assets/'
-    ];
-
-    protected $assets_remove = [
-        'assets/'
-    ];
-
-    protected $images_remove = [
-        'images/'
-    ];
-
-    protected $cache_remove = [
-        'cache/'
-    ];
+    use ConsoleTrait;
 
     /**
      *
@@ -67,75 +40,34 @@ class ClearCacheCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // Create a red output option
-        $output->getFormatter()->setStyle('red', new OutputFormatterStyle('red'));
-        $output->getFormatter()->setStyle('cyan', new OutputFormatterStyle('cyan'));
-        $output->getFormatter()->setStyle('green', new OutputFormatterStyle('green'));
-        $output->getFormatter()->setStyle('magenta', new OutputFormatterStyle('magenta'));
-
-        $this->cleanPaths($input, $output);
+        $this->setupConsole($input, $output);
+        $this->cleanPaths();
     }
 
-    // loops over the array of paths and deletes the files/folders
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
+     * loops over the array of paths and deletes the files/folders
      */
-    private function cleanPaths(InputInterface $input, OutputInterface $output)
+    private function cleanPaths()
     {
-        $output->writeln('');
-        $output->writeln('<magenta>Clearing cache</magenta>');
-        $output->writeln('');
+        $this->output->writeln('');
+        $this->output->writeln('<magenta>Clearing cache</magenta>');
+        $this->output->writeln('');
 
-        $user_config = USER_DIR . 'config/system.yaml';
-
-        $anything = false;
-
-        if ($input->getOption('all')) {
-            $remove_paths = $this->all_remove;
-        } elseif ($input->getOption('assets-only')) {
-            $remove_paths = $this->assets_remove;
-        } elseif ($input->getOption('images-only')) {
-            $remove_paths = $this->images_remove;
-        } elseif ($input->getOption('cache-only')) {
-            $remove_paths = $this->cache_remove;
+        if ($this->input->getOption('all')) {
+            $remove = 'all';
+        } elseif ($this->input->getOption('assets-only')) {
+            $remove = 'assets-only';
+        } elseif ($this->input->getOption('images-only')) {
+            $remove = 'images-only';
+        } elseif ($this->input->getOption('cache-only')) {
+            $remove = 'cache-only';
         } else {
-            $remove_paths = $this->standard_remove;
+            $remove = 'standard';
         }
 
-        foreach ($remove_paths as $path) {
-
-            $files = glob(ROOT_DIR . $path . '*');
-
-            foreach ($files as $file) {
-                if (is_file($file)) {
-                    if (@unlink($file)) {
-                        $anything = true;
-                    }
-                } elseif (is_dir($file)) {
-                    if (@Folder::delete($file)) {
-                        $anything = true;
-                    }
-                }
-            }
-
-            if ($anything) {
-                $output->writeln('<red>Cleared:  </red>' . $path . '*');
-            }
+        foreach (Cache::clearCache($remove) as $result) {
+            $this->output->writeln($result);
         }
-
-        if (file_exists($user_config)) {
-            touch($user_config);
-            $output->writeln('');
-            $output->writeln('<red>Touched: </red>' . $user_config);
-            $output->writeln('');
-        }
-
-        if (!$anything) {
-            $output->writeln('<green>Nothing to clear...</green>');
-            $output->writeln('');
-        }
-
     }
 }
 

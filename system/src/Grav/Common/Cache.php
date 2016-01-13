@@ -3,6 +3,7 @@ namespace Grav\Common;
 
 use \Doctrine\Common\Cache\Cache as DoctrineCache;
 use Grav\Common\Config\Config;
+use Grav\Common\Filesystem\Folder;
 
 /**
  * The GravCache object is used throughout Grav to store and retrieve cached data.
@@ -25,6 +26,11 @@ class Cache extends Getters
      */
     protected $key;
 
+    protected $lifetime;
+    protected $now;
+
+    protected $config;
+
     /**
      * @var DoctrineCache
      */
@@ -36,6 +42,33 @@ class Cache extends Getters
     protected $enabled;
 
     protected $cache_dir;
+
+    protected static $standard_remove = [
+        'cache/twig/',
+        'cache/doctrine/',
+        'cache/compiled/',
+        'cache/validated-',
+        'images/',
+        'assets/',
+    ];
+
+    protected static $all_remove = [
+        'cache/',
+        'images/',
+        'assets/'
+    ];
+
+    protected static $assets_remove = [
+        'assets/'
+    ];
+
+    protected static $images_remove = [
+        'images/'
+    ];
+
+    protected static $cache_remove = [
+        'cache/'
+    ];
 
     /**
      * Constructor
@@ -57,6 +90,7 @@ class Cache extends Getters
     {
         /** @var Config $config */
         $this->config = $grav['config'];
+        $this->now = time();
 
         $this->cache_dir = $grav['locator']->findResource('cache://doctrine', true, true);
 
@@ -68,7 +102,7 @@ class Cache extends Getters
         $this->enabled = (bool) $this->config->get('system.cache.enabled');
 
         // Cache key allows us to invalidate all cache on configuration changes.
-        $this->key = substr(md5(($prefix ? $prefix : 'g') . $uri->rootUrl(true) . $this->config->key() . GRAV_VERSION), 2, 8);
+        $this->key = ($prefix ? $prefix : 'g') . '-' . substr(md5($uri->rootUrl(true) . $this->config->key() . GRAV_VERSION), 2, 8);
 
         $this->driver = $this->getCacheDriver();
 
@@ -121,6 +155,15 @@ class Cache extends Getters
                 $driver->setMemcache($memcache);
                 break;
 
+            case 'redis':
+                $redis = new \Redis();
+                $redis->connect($this->config->get('system.cache.redis.server','localhost'),
+                                $this->config->get('system.cache.redis.port', 6379));
+
+                $driver = new \Doctrine\Common\Cache\RedisCache();
+                $driver->setRedis($redis);
+                break;
+
             default:
                 $driver = new \Doctrine\Common\Cache\FilesystemCache($this->cache_dir);
                 break;
@@ -154,6 +197,9 @@ class Cache extends Getters
     public function save($id, $data, $lifetime = null)
     {
         if ($this->enabled) {
+            if ($lifetime === null) {
+                $lifetime = $this->getLifetime();
+            }
             $this->driver->save($id, $data, $lifetime);
         }
     }
@@ -164,5 +210,105 @@ class Cache extends Getters
     public function getKey()
     {
         return $this->key;
+    }
+
+    /**
+     * Helper method to clear all Grav caches
+     *
+     * @param string $remove    standard|all|assets-only|images-only|cache-only
+     *
+     * @return array
+     */
+    public static function clearCache($remove = 'standard')
+    {
+
+        $output = [];
+        $user_config = USER_DIR . 'config/system.yaml';
+
+        switch($remove) {
+            case 'all':
+                $remove_paths = self::$all_remove;
+                break;
+            case 'assets-only':
+                $remove_paths = self::$assets_remove;
+                break;
+            case 'images-only':
+                $remove_paths = self::$images_remove;
+                break;
+            case 'cache-only':
+                $remove_paths = self::$cache_remove;
+                break;
+            default:
+                $remove_paths = self::$standard_remove;
+        }
+
+
+        foreach ($remove_paths as $path) {
+
+            $anything = false;
+            $files = glob(ROOT_DIR . $path . '*');
+
+            if (is_array($files)) {
+                foreach ($files as $file) {
+                    if (is_file($file)) {
+                        if (@unlink($file)) {
+                            $anything = true;
+                        }
+                    } elseif (is_dir($file)) {
+                        if (@Folder::delete($file)) {
+                            $anything = true;
+                        }
+                    }
+                }
+            }
+
+            if ($anything) {
+                $output[] = '<red>Cleared:  </red>' . $path . '*';
+            }
+        }
+
+        $output[] = '';
+
+        if (($remove == 'all' || $remove == 'standard') && file_exists($user_config)) {
+            touch($user_config);
+
+            $output[] = '<red>Touched: </red>' . $user_config;
+            $output[] = '';
+        }
+
+        return $output;
+    }
+
+
+    /**
+     * Set the cache lifetime programmatically
+     *
+     * @param int $future timestamp
+     */
+    public function setLifetime($future)
+    {
+        if (!$future) {
+            return;
+        }
+
+        $interval = $future - $this->now;
+        if ($interval > 0 && $interval < $this->getLifetime()) {
+            $this->lifetime = $interval;
+        }
+    }
+
+
+    /**
+     * Retrieve the cache lifetime (in seconds)
+     *
+     * @return mixed
+     */
+    public function getLifetime()
+    {
+        if ($this->lifetime === null) {
+            $this->lifetime = $this->config->get('system.cache.lifetime') ?: 604800; // 1 week default
+        }
+
+        return $this->lifetime;
     }
 }

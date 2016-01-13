@@ -7,7 +7,6 @@ use Pimple\ServiceProviderInterface;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Handler\PlainTextHandler;
-use Whoops\Run;
 
 class ErrorServiceProvider implements ServiceProviderInterface
 {
@@ -30,8 +29,12 @@ class ErrorServiceProvider implements ServiceProviderInterface
         $errors->pushHandler($json_page, 'json');
 
         $logger = $container['log'];
-        $errors->pushHandler(function ($exception, $inspector, $run) use($logger) {
-            $logger->addCritical($exception->getMessage(). ' - Trace: '. $exception->getTraceAsString());
+        $errors->pushHandler(function (\Exception $exception, $inspector, $run) use ($logger) {
+            try {
+                $logger->addCritical($exception->getMessage() . ' - Trace: ' . $exception->getTraceAsString());
+            } catch (\Exception $e) {
+                echo $e;
+            }
         }, 'log');
 
         $errors->register();
