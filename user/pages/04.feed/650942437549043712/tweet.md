@@ -1,5 +1,5 @@
 ---
-title: Was meint Söder damit, Flüchtlinge sollten "nach unseren Sitten" leben? Sollen sie ihre Unterkünfte selbst anzünden?
+title: Was meint Söder damit, Flüchtlinge sollten „nach unseren Sitten“ leben? Sollen sie ihre Unterkünfte selbst anzünden?
 date: Mon Oct 05 07:55:45 +0000 2015
 taxonomy:
     category: blog

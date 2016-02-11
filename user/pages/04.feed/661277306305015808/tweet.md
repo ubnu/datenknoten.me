@@ -1,5 +1,5 @@
 ---
-title: This week on "White male tech nerd privilege" we have this amazing thing https://github.com/domgetter/NCoC
+title: This week on „White male tech nerd privilege“ we have this amazing thing https://github.com/domgetter/NCoC
 date: Mon Nov 02 20:22:50 +0000 2015
 taxonomy:
     category: blog

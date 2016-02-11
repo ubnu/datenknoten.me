@@ -1,5 +1,5 @@
 ---
-title: "Crypto-Messenger, Tor-Router. Wenn Du Angst und Unsicherheit der Mitmenschen zu Gold spinnen willst, ist es eine tolle Zeit" #jabberleaks
+title: „Crypto-Messenger, Tor-Router. Wenn Du Angst und Unsicherheit der Mitmenschen zu Gold spinnen willst, ist es eine tolle Zeit“ #jabberleaks
 date: Tue Nov 11 15:59:22 +0000 2014
 taxonomy:
     category: blog

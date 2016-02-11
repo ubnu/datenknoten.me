@@ -1,5 +1,5 @@
 ---
-title: Sprache, die Gewalt verbirgt: "Flughafenverfahren" ist kein Check-in, sondern heißt bis zu 18 Monate Haft http://neusprech.org/flughafenverfahren/ #neusprech
+title: Sprache, die Gewalt verbirgt: „Flughafenverfahren“ ist kein Check-in, sondern heißt bis zu 18 Monate Haft http://neusprech.org/flughafenverfahren/ #neusprech
 date: Wed Nov 04 08:17:23 +0000 2015
 taxonomy:
     category: blog

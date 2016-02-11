@@ -1,5 +1,5 @@
 ---
-title: Bei all den "Erfolgsmeldungen" sollte man sich fragen wie lange Engagierte noch Notersthilfe und Schutz von Unterkünften leisten können...
+title: Bei all den „Erfolgsmeldungen“ sollte man sich fragen wie lange Engagierte noch Notersthilfe und Schutz von Unterkünften leisten können…
 date: Mon Sep 07 07:46:44 +0000 2015
 taxonomy:
     category: blog

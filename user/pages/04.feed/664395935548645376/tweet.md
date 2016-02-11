@@ -1,5 +1,5 @@
 ---
-title: Monkey Island 1 "in echt".  Rothenburg odT  Siehe hier: http://www.eupedia.com/germany/rothenburg_ob_der_tauber.shtml und hier: http://bit.ly/1Myoaee http://twitter.com/kultpower/status/664157107076407296/photo/1
+title: Monkey Island 1 „in echt“.  Rothenburg odT  Siehe hier: http://www.eupedia.com/germany/rothenburg_ob_der_tauber.shtml und hier: http://bit.ly/1Myoaee http://twitter.com/kultpower/status/664157107076407296/photo/1
 date: Wed Nov 11 10:55:09 +0000 2015
 taxonomy:
     category: blog

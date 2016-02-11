@@ -1,5 +1,5 @@
 ---
-title: git commit -a -m "¯\_(ツ)_/¯"; git push
+title: git commit -a -m „¯\_(ツ)_/¯“; git push
 date: Thu Feb 04 12:50:57 +0000 2016
 taxonomy:
     category: blog

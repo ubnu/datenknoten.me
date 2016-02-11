@@ -1,5 +1,5 @@
 ---
-title: Unsere Advents-Chemtrails haben wir in den Geschmacksrichtungen "Zimt", "Anis", "Lebkuchen", "Weihrauch" und "Umerziehung".
+title: Unsere Advents-Chemtrails haben wir in den Geschmacksrichtungen „Zimt“, „Anis”, „Lebkuchen”, „Weihrauch“ und „Umerziehung“.
 date: Sun Dec 06 09:41:02 +0000 2015
 taxonomy:
     category: blog

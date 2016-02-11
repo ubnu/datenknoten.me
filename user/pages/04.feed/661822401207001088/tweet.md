@@ -1,5 +1,5 @@
 ---
-title: Bei der "Critical Mass" in Linz ist ein Autofahrer ausgetickt und hat Fahrerflucht begangen. https://www.youtube.com/watch?v=0CurQHQmqPY
+title: Bei der „Critical Mass“ in Linz ist ein Autofahrer ausgetickt und hat Fahrerflucht begangen. https://www.youtube.com/watch?v=0CurQHQmqPY
 date: Wed Nov 04 08:28:51 +0000 2015
 taxonomy:
     category: blog

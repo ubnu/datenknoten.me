@@ -1,5 +1,5 @@
 ---
-title: Wie lange müssen wir noch "Ethiker" ertragen, die sich mit "Wird das autonome Auto die Oma oder das Kind umfahren?!"-Bullshit profilieren?
+title: Wie lange müssen wir noch „Ethiker“ ertragen, die sich mit „Wird das autonome Auto die Oma oder das Kind umfahren?!“-Bullshit profilieren?
 date: Fri Jan 22 08:39:16 +0000 2016
 taxonomy:
     category: blog

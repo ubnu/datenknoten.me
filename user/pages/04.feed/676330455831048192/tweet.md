@@ -1,5 +1,5 @@
 ---
-title: K-Pop group Oh My Girl reportedly detained at LAX after being "mistaken" for sex workers http://bit.ly/1QBmv98
+title: K-Pop group Oh My Girl reportedly detained at LAX after being „mistaken“ for sex workers http://bit.ly/1QBmv98
 date: Mon Dec 14 09:18:40 +0000 2015
 taxonomy:
     category: blog

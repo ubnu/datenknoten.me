@@ -1,5 +1,5 @@
 ---
-title: Wie viele Polizisten braucht man um eine Glühbirne zu wechseln?"Keinen, sie verprügeln den Raum weil er schwarz ist" #Rigaer94 #B0602
+title: Wie viele Polizisten braucht man um eine Glühbirne zu wechseln? „Keinen, sie verprügeln den Raum weil er schwarz ist“ #Rigaer94 #B0602
 date: Sun Feb 07 15:56:50 +0000 2016
 taxonomy:
     category: blog

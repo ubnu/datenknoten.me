@@ -1,5 +1,5 @@
 ---
-title: Ehemalige Geisel: pictures from Germany of people welcoming migrants "particularly troubling" to IS. http://www.theguardian.com/commentisfree/2015/nov/16/isis-bombs-hostage-syria-islamic-state-paris-attacks
+title: Ehemalige Geisel: pictures from Germany of people welcoming migrants „particularly troubling“ to IS. http://www.theguardian.com/commentisfree/2015/nov/16/isis-bombs-hostage-syria-islamic-state-paris-attacks
 date: Tue Nov 17 09:05:10 +0000 2015
 taxonomy:
     category: blog

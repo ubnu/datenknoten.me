@@ -1,5 +1,5 @@
 ---
-title: in meiner timeline fiel das oxymoron "gutes kölsch".ich brauch ein neues pils.
+title: in meiner timeline fiel das oxymoron „gutes kölsch“.ich brauch ein neues pils.
 date: Tue Feb 02 06:17:56 +0000 2016
 taxonomy:
     category: blog

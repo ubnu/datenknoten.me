@@ -1,5 +1,5 @@
 ---
-title: Wenn ein Flüchtlingskind aus deiner Klasse vor dir steht und schluchzt: "Die meinen uns, oder?", ist alles zu Heidenau und Co gesagt.
+title: Wenn ein Flüchtlingskind aus deiner Klasse vor dir steht und schluchzt: „Die meinen uns, oder?“, ist alles zu Heidenau und Co gesagt.
 date: Thu Aug 27 09:00:29 +0000 2015
 taxonomy:
     category: blog

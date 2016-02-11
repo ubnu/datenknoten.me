@@ -1,5 +1,5 @@
 ---
-title: "In der Arbeit benutze ich bloß FPÖ-Kulis. Die klaut mir wenigstens niemand."
+title: „In der Arbeit benutze ich bloß FPÖ-Kulis. Die klaut mir wenigstens niemand.“
 date: Wed Jan 13 08:59:58 +0000 2016
 taxonomy:
     category: blog

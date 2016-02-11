@@ -1,5 +1,5 @@
 ---
-title: If your response to "Gamergate did this to XY" is "but XY deserves it because", you're Gamergate. Also: incapable of basic human decency
+title: If your response to „Gamergate did this to XY“ is „but XY deserves it because“, you're Gamergate. Also: incapable of basic human decency
 date: Tue Nov 17 18:43:13 +0000 2015
 taxonomy:
     category: blog

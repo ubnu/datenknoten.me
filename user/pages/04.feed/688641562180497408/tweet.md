@@ -1,5 +1,5 @@
 ---
-title: So many of the "innovative" products on Kickstarter remind me of the SkyMall catalog
+title: So many of the „innovative“ products on Kickstarter remind me of the SkyMall catalog
 date: Sun Jan 17 08:38:37 +0000 2016
 taxonomy:
     category: blog

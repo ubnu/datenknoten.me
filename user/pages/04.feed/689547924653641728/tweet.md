@@ -1,5 +1,5 @@
 ---
-title: "Freiheit ist anstrengend, Freiheit ist ein Chaos. Kein Wunder, dass sich so wenige für sie entscheiden."
+title: „Freiheit ist anstrengend, Freiheit ist ein Chaos. Kein Wunder, dass sich so wenige für sie entscheiden.“
 date: Tue Jan 19 20:40:11 +0000 2016
 taxonomy:
     category: blog

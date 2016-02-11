@@ -1,5 +1,5 @@
 ---
-title: "Die Lösung ist sogar oft: Nichts tun. Innehalten. Pause machen" - @AlexBronsky über "That Dragon, Cancer" http://www.gamestar.de/spiele/that-dragon-cancer/test/that_dragon_cancer,51930,3242114.html
+title: „Die Lösung ist sogar oft: Nichts tun. Innehalten. Pause machen“ - @AlexBronsky über „That Dragon, Cancer“ http://www.gamestar.de/spiele/that-dragon-cancer/test/that_dragon_cancer,51930,3242114.html
 date: Tue Jan 12 23:19:06 +0000 2016
 taxonomy:
     category: blog

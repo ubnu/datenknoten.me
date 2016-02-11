@@ -1,5 +1,5 @@
 ---
-title: @TheQuinnspiracy "it's about ethics in journalism" #FiveWordsToRuinADate
+title: @TheQuinnspiracy „it's about ethics in journalism“ #FiveWordsToRuinADate
 date: Wed Jan 14 19:37:24 +0000 2015
 taxonomy:
     category: blog

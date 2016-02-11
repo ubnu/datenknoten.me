@@ -1,5 +1,5 @@
 ---
-title: Ich beginne montags meine Mails übrigens immer mit "Ey Digga" statt "Sehr geehrte Damen und Herren"
+title: Ich beginne montags meine Mails übrigens immer mit „Ey Digga“ statt „Sehr geehrte Damen und Herren“
 date: Mon Jan 25 09:28:25 +0000 2016
 taxonomy:
     category: blog

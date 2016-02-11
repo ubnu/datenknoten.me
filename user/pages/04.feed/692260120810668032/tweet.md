@@ -1,5 +1,5 @@
 ---
-title: Schund Blatt Österreich: "Terror" und "Gewaltterror" durch Flüchtlinge #hetze http://twitter.com/porrporr/status/692239747167711232/photo/1
+title: Schund Blatt Österreich: „Terror“ und „Gewaltterror“ durch Flüchtlinge #hetze http://twitter.com/porrporr/status/692239747167711232/photo/1
 date: Wed Jan 27 08:17:29 +0000 2016
 taxonomy:
     category: blog

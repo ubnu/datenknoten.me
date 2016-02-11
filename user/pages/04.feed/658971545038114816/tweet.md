@@ -1,5 +1,5 @@
 ---
-title: Der deutsche Arbeitgeberverband hat geantwortet.  "Gender-Mainstreaming […] faschistoid" und weitere Perlen. http://twitter.com/tante/status/658695340795760641/photo/1
+title: Der deutsche Arbeitgeberverband hat geantwortet.  „Gender-Mainstreaming […] faschistoid“ und weitere Perlen. http://twitter.com/tante/status/658695340795760641/photo/1
 date: Tue Oct 27 11:40:34 +0000 2015
 taxonomy:
     category: blog

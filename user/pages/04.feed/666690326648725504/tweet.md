@@ -1,5 +1,5 @@
 ---
-title: Ein Kollege wurde heute am Rande einer Anti-Asyl-Demo in Rathenow angegriffen. Immerhin "nur" der Blitz ist kaputt -.- #fcknzs
+title: Ein Kollege wurde heute am Rande einer Anti-Asyl-Demo in Rathenow angegriffen. Immerhin „nur“ der Blitz ist kaputt -.- #fcknzs
 date: Tue Nov 17 18:52:15 +0000 2015
 taxonomy:
     category: blog
