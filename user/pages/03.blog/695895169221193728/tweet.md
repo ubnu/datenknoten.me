@@ -1,5 +1,5 @@
 ---
-title: "Honestly, this really isn’t even the thing that worries me most about getting pregnant." http://onion.com/1PUK273 http://twitter.com/TheOnion/status/694929816886317057/photo/1
+title: „Honestly, this really isn’t even the thing that worries me most about getting pregnant.“ http://onion.com/1PUK273 http://twitter.com/TheOnion/status/694929816886317057/photo/1
 date: Sat Feb 06 09:01:52 +0000 2016
 taxonomy:
     category: blog

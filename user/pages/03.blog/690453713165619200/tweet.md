@@ -1,5 +1,5 @@
 ---
-title: "It is dangerous to be right when the government is wrong." http://twitter.com/anarcharaccoon/status/690329221260967940/photo/1
+title: „It is dangerous to be right when the government is wrong.“ http://twitter.com/anarcharaccoon/status/690329221260967940/photo/1
 date: Fri Jan 22 08:39:27 +0000 2016
 taxonomy:
     category: blog

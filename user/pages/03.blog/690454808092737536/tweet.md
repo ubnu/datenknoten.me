@@ -1,5 +1,5 @@
 ---
-title: "under the direction of the executives, Rey’s presence was deliberately minimized in the planned merchandise." http://www.hypable.com/star-wars-toymakers-specifically-directed-to-exclude-rey/
+title: „under the direction of the executives, Rey’s presence was deliberately minimized in the planned merchandise.“ http://www.hypable.com/star-wars-toymakers-specifically-directed-to-exclude-rey/
 date: Fri Jan 22 08:43:48 +0000 2016
 taxonomy:
     category: blog

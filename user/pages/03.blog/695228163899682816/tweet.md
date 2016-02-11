@@ -1,5 +1,5 @@
 ---
-title: 'Pro-rape' groups cancel their meetups because people threatened to attack and shout at them. Guys, you wouldn't last five minutes as women.
+title: ‚Pro-rape‘ groups cancel their meetups because people threatened to attack and shout at them. Guys, you would not last five minutes as women.
 date: Thu Feb 04 12:51:25 +0000 2016
 taxonomy:
     category: blog
