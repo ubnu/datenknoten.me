@@ -1,5 +1,5 @@
 ---
-title: "Patrioten". http://twitter.com/HoneckerMargot/status/703637714361520128/photo/1
+title: „Patrioten“. http://twitter.com/HoneckerMargot/status/703637714361520128/photo/1
 date: Sun Feb 28 08:38:50 +0000 2016
 taxonomy:
     category: blog
