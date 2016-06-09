@@ -1,5 +1,5 @@
 ---
-title: [TW fefe aber ist Illustration der Kaputtheit der Szene]:"Ich mach ja kein Victim Blaming" ... blames Victims http://twitter.com/tante/status/739776700897210368/photo/1
+title: [TW fefe aber ist Illustration der Kaputtheit der Szene]:„Ich mach ja kein Victim Blaming“ ... blames Victims http://twitter.com/tante/status/739776700897210368/photo/1
 date: Mon Jun 06 15:33:00 +0000 2016
 taxonomy:
     category: blog

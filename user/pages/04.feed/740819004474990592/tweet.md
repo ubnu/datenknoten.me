@@ -1,5 +1,5 @@
 ---
-title: "He said, they said" - I wrote about what it was like being involved with Jacob. http://hypatia.ca/2016/06/07/he-said-they-said
+title: „He said, they said“ - I wrote about what it was like being involved with Jacob. http://hypatia.ca/2016/06/07/he-said-they-said
 date: Thu Jun 09 08:13:09 +0000 2016
 taxonomy:
     category: blog
