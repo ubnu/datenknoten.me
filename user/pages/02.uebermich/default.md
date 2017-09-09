@@ -5,7 +5,7 @@ title: Über mich
 
 Ich bin ein 30-jähriger DevOps aus Jena.
  
-Einen Lebenslauf findest du hier: [cv.datenknoten.me](https://cv.datenknoten.me/)
+Einen Lebenslauf findest du hier: [cv.datenknoten.me](in Überarbeitung)
 
 ## Kontakt
 
